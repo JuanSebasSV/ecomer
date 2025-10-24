@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TechStore Pro - Su tienda tecnológica online</title>
+  <link rel="stylesheet" href="../output.css">
+</head>
+
+<body class="bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-gray-100 font-sans transition-colors duration-500">
+
+  <!-- HEADER -->
+  <header class="bg-white dark:bg-gray-900 shadow-lg sticky top-0 z-50 transition-colors duration-500">
+    <nav class="relative max-w-7xl mx-auto px-4 py-4">
+      <div class="flex items-center justify-between relative">
+
+        <!-- LOGO (IZQUIERDA) -->
+        <div class="flex items-center flex-shrink-0">
+          <div class="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-3 py-2 rounded-lg mr-3">
+            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+              <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"/>
+            </svg>
+         </div>
+          <h1 class="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+            <a href="../pages/index.html">TechStore Pro</a>
+          </h1>
+        </div>
+        <!-- MENÚ (CENTRADO EN DESKTOP) -->
+        <div class="hidden md:flex absolute left-1/2 transform -translate-x-1/2 space-x-6">
+          <a href="./index.html" class="text-gray-700 dark:text-gray-200 hover:text-blue-600 font-medium transition-colors duration-200 relative group">
+            Inicio <span class="absolute -bottom-1 left-0 w-full h-0.5 bg-blue-600"></span>
+          </a>
+          <a href="./productos.html" class="text-gray-700 dark:text-gray-200 hover:text-blue-600 font-medium transition-colors duration-200 relative group">
+            Productos <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-600 transition-all duration-200 group-hover:w-full"></span>
+          </a>
+          <a href="#" class="text-gray-700 dark:text-gray-200 hover:text-blue-600 font-medium transition-colors duration-200 relative group">
+            Categorías <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-600 transition-all duration-200 group-hover:w-full"></span>
+          </a>
+          <a href="#" class="text-gray-700 dark:text-gray-200 hover:text-blue-600 font-medium transition-colors duration-200 relative group">
+            Contacto <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-600 transition-all duration-200 group-hover:w-full"></span>
+          </a>
+        </div>
+        <!-- ICONOS (DERECHA) -->
+        <div class="flex items-center space-x-3 absolute right-1 top-15">
+          <!-- BOTÓN TEMA -->
+          <button id="theme-toggle" class="p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition" aria-label="Alternar tema">
+            <!-- SOL (light icon) -->
+            <svg id="theme-toggle-light-icon" xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 hidden" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="12" cy="12" r="5"/>
+              <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+            </svg>
+            <!-- LUNA (dark icon) -->
+            <svg id="theme-toggle-dark-icon" xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 hidden" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/>
+            </svg>
+          </button>
+          <!-- CARRITO -->
+          <a href="#" class="relative group p-2 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 dark:hover:from-gray-800 dark:hover:to-gray-700 rounded-lg transition-all duration-300 transform hover:scale-105" aria-label="Carrito">
+            <svg class="w-6 h-6 text-gray-700 dark:text-gray-200 transition-all duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-1.1 5m1.1-5l10 0m-10 0v5m10-5v5m0 0a2 2 0 11-4 0m-6 0a2 2 0 114 0"/>
+            </svg>
+            <span id="cart-counter" class="absolute -top-2 -right-2 bg-gradient-to-r from-red-500 via-pink-500 to-red-600 text-white text-xs font-bold rounded-full min-w-5 h-5 flex items-center justify-center px-1 shadow-lg border-2 border-white" style="display:none;">0</span>
+          </a>
+        </div>
+      </div>
+    </nav>
+  </header>
+  <!-- MAIN -->
+  <main>
+
+    <!-- Hero con carrusel -->
+    <section id="hero" class="hero text-white py-20 relative overflow-hidden transition-opacity duration-1000">
+      <div class="absolute inset-0 bg-black opacity-10"></div>
+      <div class="container mx-auto px-4 text-center relative z-10">
+        <h1 class="text-5xl md:text-6xl font-bold mb-6 animate-fadein">
+          Encuentra la mejor <span class="text-yellow-300">tecnología</span>
+        </h1>
+        <p class="text-xl md:text-2xl mb-8 opacity-90">
+          Laptops, celulares y componentes PC al mejor precio del mercado
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+          <a href="#" class="bg-white text-blue-600 px-8 py-4 rounded-lg text-lg font-semibold hover:bg-gray-100 transition duration-300 transform hover:scale-105">
+            Ver Productos
+          </a>
+          <button class="border-2 border-white text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-white hover:text-blue-600 transition duration-300">
+            Ofertas Especiales
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Categorías -->
+    <section id="categorias" class="py-16 bg-gray-50 dark:bg-gray-900 transition-colors duration-500">
+      <div class="container mx-auto px-4">
+        <div class="text-center mb-12">
+          <h2 class="text-4xl font-bold mb-4">Nuestras Categorías</h2>
+          <p class="text-gray-600 dark:text-gray-400 text-lg">Descubre nuestra amplia gama de productos tecnológicos</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div class="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg text-center hover:shadow-2xl transition duration-300 transform hover:-translate-y-2 cursor-pointer">
+            <div class="text-6xl mb-6">💻</div>
+            <h3 class="text-2xl font-bold mb-4">Laptops</h3>
+            <p class="text-gray-600 dark:text-gray-400 mb-6">Las mejores marcas y modelos para trabajo y gaming</p>
+            <div class="text-blue-600 font-semibold">Ver más →</div>
+          </div>
+
+          <div class="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg text-center hover:shadow-2xl transition duration-300 transform hover:-translate-y-2 cursor-pointer">
+            <div class="text-6xl mb-6">📱</div>
+            <h3 class="text-2xl font-bold mb-4">Celulares</h3>
+            <p class="text-gray-600 dark:text-gray-400 mb-6">Última tecnología móvil de todas las marcas</p>
+            <div class="text-blue-600 font-semibold">Ver más →</div>
+          </div>
+
+          <div class="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg text-center hover:shadow-2xl transition duration-300 transform hover:-translate-y-2 cursor-pointer">
+            <div class="text-6xl mb-6">⚙</div>
+            <h3 class="text-2xl font-bold mb-4">Componentes PC</h3>
+            <p class="text-gray-600 dark:text-gray-400 mb-6">Arma tu PC ideal con los mejores componentes</p>
+            <div class="text-blue-600 font-semibold">Ver más →</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Newsletter -->
+    <section class="py-16 bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-700 dark:to-purple-800 transition-colors duration-500">
+      <div class="container mx-auto px-4 text-center text-white">
+        <h2 class="text-3xl font-bold mb-4">Mantente al día con TechStore Pro</h2>
+        <p class="text-lg mb-8 opacity-90">Recibe las últimas ofertas y novedades tecnológicas</p>
+        <div class="max-w-md mx-auto flex gap-4">
+          <input type="email" placeholder="Tu email" class="flex-1 px-4 py-3 bg-white dark:bg-gray-800 rounded-lg text-gray-900 dark:text-gray-100 placeholder-gray-400 outline-none focus:ring-2 focus:ring-blue-500 transition duration-200">
+          <button class="bg-white text-blue-600 dark:bg-blue-600 dark:text-white px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 dark:hover:bg-blue-500 transition duration-200">
+            Suscribirse
+          </button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- FOOTER -->
+  <footer id="contacto" class="bg-gray-900 dark:bg-gray-950 text-white py-12 transition-colors duration-500">
+    <div class="max-w-7xl mx-auto px-4">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div>
+          <div class="flex items-center mb-4">
+            <div class="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-2 rounded-lg mr-3">
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z" />
+              </svg>
+            </div>
+            <h3 class="text-xl font-bold">TechStore Pro</h3>
+          </div>
+          <p class="text-gray-400 mb-4">Tu tienda de tecnología de confianza con los mejores productos y precios.</p>
+        </div>
+
+        <div>
+          <h3 class="text-lg font-semibold mb-4">Enlaces</h3>
+          <ul class="space-y-2 text-gray-400">
+            <li><a href="./index.html" class="hover:text-white transition-colors duration-200">Inicio</a></li>
+            <li><a href="./productos.html" class="hover:text-white transition-colors duration-200">Productos</a></li>
+            <li><a href="carrito.html" class="hover:text-white transition-colors duration-200">Carrito</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h3 class="text-lg font-semibold mb-4">Atención</h3>
+          <ul class="space-y-2 text-gray-400">
+            <li><a href="#" class="hover:text-white transition-colors duration-200">Contacto</a></li>
+            <li><a href="#" class="hover:text-white transition-colors duration-200">Envíos</a></li>
+            <li><a href="#" class="hover:text-white transition-colors duration-200">Devoluciones</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h3 class="text-lg font-semibold mb-4">Legal</h3>
+          <ul class="space-y-2 text-gray-400">
+            <li><a href="#" class="hover:text-white transition-colors duration-200">Términos</a></li>
+            <li><a href="#" class="hover:text-white transition-colors duration-200">Privacidad</a></li>
+            <li><a href="#" class="hover:text-white transition-colors duration-200">Cookies</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
+        <p>&copy; 2025 TechStore Pro. Todos los derechos reservados.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+<script src="../js/main.js"></script>
+</body>
+</html>
