@@ -1,6 +1,5 @@
 <!-- productos.html
      Reconstruido a partir del PDF (OCR) y adaptado a Tailwind.
-     Fuente / referencia: WORKSHOP- Pagina web productos .pdf :contentReference[oaicite:1]{index=1}
 -->
 <!DOCTYPE html>
 <html lang="es">
@@ -9,6 +8,54 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>TechStore Pro — Productos</title>
   <link rel="stylesheet" href="../output.css" />
+  <style>
+/*Cambia valor Ejemplo: :root { --card-img-h: 22rem; }*/
+    :root {
+      --card-img-h: 22rem;
+    }
+    #productos-grid > .product-card {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+
+    /*Aunque tu JS imprima `h-48` la altura real viene de la variable --card-img-h */
+    .product-card .h-48,
+    .product-card .h-56,
+    .product-card .h-64,
+    .product-card .h-72,
+    .product-card .h-80 {
+      height: var(--card-img-h) !important;
+    }
+
+    /* Si tu JS genera un contenedor sin clase h-XX, apuntamos al primer hijo (imagen) por si acaso */
+    .product-card > div:first-child {
+      height: var(--card-img-h);
+    }
+
+    /* Asegurar que la parte de contenido empuje hacia abajo (consistencia de altura) */
+    .product-card .card-content {
+      display: flex;
+      flex-direction: column;
+      flex: 1 1 auto;
+    }
+    .product-card .card-footer {
+      margin-top: auto;
+    }
+
+    /* Pequeña mejora para evitar que img sobresalga si la caja es mayor */
+    .product-card img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    /* Para pantallas muy pequeñas puedes querer una altura menor por defecto: */
+    @media (max-width: 640px) {
+      :root { --card-img-h: 10rem; }
+    }
+  </style>
 </head>
 <body class="bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-gray-100 font-sans transition-colors duration-300">
 
@@ -37,11 +84,7 @@
             Productos
             <span class="absolute -bottom-1 left-0 w-full h-0.5 bg-blue-600"></span>
           </a>
-          <a href="#" class="text-gray-700 dark:text-gray-200 hover:text-blue-600 font-medium transition-colors duration-200 relative group">
-            Categorías
-            <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-600 transition-all duration-200 group-hover:w-full"></span>
-          </a>
-          <a href="#" class="text-gray-700 dark:text-gray-200 hover:text-blue-600 font-medium transition-colors duration-200 relative group">
+          <a href="./contactenos.html" class="text-gray-700 dark:text-gray-200 hover:text-blue-600 font-medium transition-colors duration-200 relative group">
             Contacto
             <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-600 transition-all duration-200 group-hover:w-full"></span>
           </a>
@@ -67,7 +110,7 @@
             </svg>
           </button>
           <!-- CARRITO -->
-          <a href="#" class="relative group p-2 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 dark:hover:from-gray-800 dark:hover:to-gray-700 rounded-lg transition-all duration-300 transform hover:scale-105" aria-label="Carrito">
+          <a href="./car.html" class="relative group p-2 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 dark:hover:from-gray-800 dark:hover:to-gray-700 rounded-lg transition-all duration-300 transform hover:scale-105" aria-label="Carrito">
             <svg class="w-6 h-6 text-gray-700 dark:text-gray-200 transition-all duration-300"
               fill="none" stroke="currentColor" viewBox="0 0 24 24"
               stroke-width="2" aria-hidden="true">
@@ -83,28 +126,22 @@
     </nav>
   </header>
 
-
-
   <!-- MAIN -->
   <main class="max-w-7xl mx-auto px-4 py-10">
 
-    <!-- BUSCADOR Y FILTROS (estructura fiel al PDF) -->
+    <!-- BUSCADOR Y FILTROS -->
     <section class="bg-white dark:bg-gray-900 rounded-xl shadow-lg p-6 mb-8 transition-colors duration-300">
-      <!-- Barra de búsqueda -->
       <div class="mb-6">
         <div class="relative">
           <input id="search-input" type="text" placeholder="Buscar productos..."
             class="w-full pl-12 pr-4 py-3 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200"/>
-          <!-- lupa SVG (posicionado) -->
           <svg class="absolute left-4 top-3.5 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" aria-hidden="true">
             <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M11 19a8 8 0 100-16 8 8 0 000 16z"></path>
           </svg>
         </div>
       </div>
 
-      <!-- filtros: 3 columnas en md -->
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <!-- Categoría -->
         <div>
           <label for="category-filter" class="block text-sm font-medium text-gray-700 mb-2">Categoría</label>
           <select id="category-filter"
@@ -117,7 +154,6 @@
           </select>
         </div>
 
-        <!-- Rango de precio -->
         <div>
           <label for="price-filter" class="block text-sm font-medium text-gray-700 mb-2">Rango de Precio</label>
           <select id="price-filter"
@@ -129,7 +165,6 @@
           </select>
         </div>
 
-        <!-- Ordenar por -->
         <div>
           <label for="sort-filter" class="block text-sm font-medium text-gray-700 mb-2">Ordenar por</label>
           <select id="sort-filter"
@@ -144,193 +179,13 @@
       </div>
     </section>
 
-    <!-- GRID DE PRODUCTOS (incluyo varias tarjetas estáticas tal como en el PDF) -->
     <section id="productos-section" class="mb-12">
-      <div id="productos-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-
-        <!-- Producto 1 -->
-        <div class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition duration-300 transform hover:-translate-y-1 product-card" data-category="laptops" data-price="2499000" data-product-id="macbook-pro-m3">
-          <div class="bg-gradient-to-br from-gray-100 to-gray-200 h-48 flex items-center justify-center relative overflow-hidden">
-            <img src="https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=800" alt="MacBook Pro M3" class="w-full h-full object-cover hover:scale-105 transition-transform duration-300" loading="lazy">
-          </div>
-          <div class="p-6">
-            <h3 class="text-lg font-bold mb-2 text-gray-800 dark:text-gray-100">MacBook Pro M3</h3>
-            <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">Potencia profesional para creativos y desarrolladores</p>
-            <div class="flex items-center justify-between mb-4">
-              <div><span class="text-2xl font-bold text-blue-600 dark:text-blue-400">$2,499,000</span></div>
-              <div class="flex items-center">
-                <div class="text-yellow-400 mr-2">★★★★★</div>
-                <span class="text-gray-500 text-sm">(128 reseñas)</span>
-              </div>
-            </div>
-            <div class="flex space-x-2">
-              <button class="ver-detalles-btn bg-green-600 text-white px-3 py-2 rounded-lg hover:bg-green-700 transition duration-300 flex-1 text-sm" data-product-id="macbook-pro-m3">Ver Detalles</button>
-              <button class="add-to-cart-btn bg-blue-600 text-white px-3 py-2 rounded-lg hover:bg-blue-700 transition duration-300 flex-1 text-sm" data-product="MacBook Pro M3" data-price="2499000" data-id="macbook-pro-m3">Comprar</button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Producto 2 -->
-        <div class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition duration-300 transform hover:-translate-y-1 product-card" data-category="celulares" data-price="1199000" data-product-id="iphone-15-pro">
-          <div class="bg-gradient-to-br from-gray-100 to-gray-200 h-48 flex items-center justify-center relative overflow-hidden">
-            <img src="https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=800" alt="iPhone 15 Pro" class="w-full h-full object-cover hover:scale-105 transition-transform duration-300" loading="lazy">
-          </div>
-          <div class="p-6">
-            <h3 class="text-lg font-bold mb-2 text-gray-800 dark:text-gray-100">iPhone 15 Pro</h3>
-            <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">El smartphone más avanzado con chip A17 Pro</p>
-            <div class="flex items-center justify-between mb-4">
-              <div><span class="text-2xl font-bold text-blue-600 dark:text-blue-400">$1,199,000</span></div>
-              <div class="flex items-center">
-                <div class="text-yellow-400 mr-2">★★★★★</div>
-                <span class="text-gray-500 text-sm">(89 reseñas)</span>
-              </div>
-            </div>
-            <div class="flex space-x-2">
-              <button class="ver-detalles-btn bg-green-600 text-white px-3 py-2 rounded-lg hover:bg-green-700 transition duration-300 flex-1 text-sm" data-product-id="iphone-15-pro">Ver Detalles</button>
-              <button class="add-to-cart-btn bg-blue-600 text-white px-3 py-2 rounded-lg hover:bg-blue-700 transition duration-300 flex-1 text-sm" data-product="iPhone 15 Pro" data-price="1199000" data-id="iphone-15-pro">Comprar</button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Producto 3 -->
-        <div class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition duration-300 transform hover:-translate-y-1 product-card" data-category="componentes" data-price="599000" data-product-id="rtx-4070-super">
-          <div class="bg-gradient-to-br from-gray-100 to-gray-200 h-48 flex items-center justify-center relative overflow-hidden">
-            <img src="https://images.unsplash.com/photo-1580894894513-541e068a3e2b?w=800" alt="RTX 4070 Super" class="w-full h-full object-cover hover:scale-105 transition-transform duration-300" loading="lazy">
-          </div>
-          <div class="p-6">
-            <h3 class="text-lg font-bold mb-2 text-gray-800 dark:text-gray-100">RTX 4070 Super</h3>
-            <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">Tarjeta gráfica de nueva generación para gaming</p>
-            <div class="flex items-center justify-between mb-4">
-              <div><span class="text-2xl font-bold text-blue-600 dark:text-blue-400">$599,000</span></div>
-              <div class="flex items-center">
-                <div class="text-yellow-400 mr-2">★★★★★</div>
-                <span class="text-gray-500 text-sm">(156 reseñas)</span>
-              </div>
-            </div>
-            <div class="flex space-x-2">
-              <button class="ver-detalles-btn bg-green-600 text-white px-3 py-2 rounded-lg hover:bg-green-700 transition duration-300 flex-1 text-sm" data-product-id="rtx-4070-super">Ver Detalles</button>
-              <button class="add-to-cart-btn bg-blue-600 text-white px-3 py-2 rounded-lg hover:bg-blue-700 transition duration-300 flex-1 text-sm" data-product="RTX 4070 Super" data-price="599000" data-id="rtx-4070-super">Comprar</button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Producto 4 -->
-        <div class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition duration-300 transform hover:-translate-y-1 product-card" data-category="accesorios" data-price="890000" data-product-id="silla-gaming">
-          <div class="bg-gradient-to-br from-gray-100 to-gray-200 h-48 flex items-center justify-center relative overflow-hidden">
-            <img src="https://images.unsplash.com/photo-1541558869434-2840d308329a?w=800" alt="Silla Gaming Pro" class="w-full h-full object-cover hover:scale-105 transition-transform duration-300" loading="lazy">
-          </div>
-          <div class="p-6">
-            <h3 class="text-lg font-bold mb-2 text-gray-800 dark:text-gray-100">Silla Gaming Pro</h3>
-            <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">Ergonómica, LED RGB</p>
-            <div class="flex items-center justify-between mb-4">
-              <div><span class="text-2xl font-bold text-blue-600 dark:text-blue-400">$890,000</span></div>
-              <div class="flex items-center">
-                <div class="text-yellow-400 mr-2">★★★★★</div>
-                <span class="text-gray-500 text-sm">(45 reseñas)</span>
-              </div>
-            </div>
-            <div class="flex space-x-2">
-              <button class="ver-detalles-btn bg-green-600 text-white px-3 py-2 rounded-lg hover:bg-green-700 transition duration-300 flex-1 text-sm" data-product-id="silla-gaming">Ver Detalles</button>
-              <button class="add-to-cart-btn bg-blue-600 text-white px-3 py-2 rounded-lg hover:bg-blue-700 transition duration-300 flex-1 text-sm" data-product="Silla Gaming Pro" data-price="890000" data-id="silla-gaming">Comprar</button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Producto 5 (ejemplo adicional) -->
-        <div class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition duration-300 transform hover:-translate-y-1 product-card" data-category="laptops" data-price="1599000" data-product-id="asus-rog">
-          <div class="bg-gradient-to-br from-gray-100 to-gray-200 h-48 flex items-center justify-center relative overflow-hidden">
-            <img src="https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=800" alt="ASUS ROG" class="w-full h-full object-cover hover:scale-105 transition-transform duration-300" loading="lazy">
-          </div>
-          <div class="p-6">
-            <h3 class="text-lg font-bold mb-2 text-gray-800 dark:text-gray-100">ASUS ROG Gaming</h3>
-            <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">Notebook gaming con RTX y refrigeración avanzada</p>
-            <div class="flex items-center justify-between mb-4">
-              <div><span class="text-2xl font-bold text-blue-600 dark:text-blue-400">$1,599,000</span></div>
-              <div class="flex items-center">
-                <div class="text-yellow-400 mr-2">★★★★☆</div>
-                <span class="text-gray-500 text-sm">(64 reseñas)</span>
-              </div>
-            </div>
-            <div class="flex space-x-2">
-              <button class="ver-detalles-btn bg-green-600 text-white px-3 py-2 rounded-lg hover:bg-green-700 transition duration-300 flex-1 text-sm" data-product-id="asus-rog">Ver Detalles</button>
-              <button class="add-to-cart-btn bg-blue-600 text-white px-3 py-2 rounded-lg hover:bg-blue-700 transition duration-300 flex-1 text-sm" data-product="ASUS ROG Gaming" data-price="1599000" data-id="asus-rog">Comprar</button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Producto 6 -->
-        <div class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition duration-300 transform hover:-translate-y-1 product-card" data-category="celulares" data-price="799000" data-product-id="samsung-s23">
-          <div class="bg-gradient-to-br from-gray-100 to-gray-200 h-48 flex items-center justify-center relative overflow-hidden">
-            <img src="https://images.unsplash.com/photo-1512496015851-a90fb38ba796?w=800" alt="Samsung S23" class="w-full h-full object-cover hover:scale-105 transition-transform duration-300" loading="lazy">
-          </div>
-          <div class="p-6">
-            <h3 class="text-lg font-bold mb-2 text-gray-800 dark:text-gray-100">Samsung S23</h3>
-            <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">Cámara profesional y gran batería</p>
-            <div class="flex items-center justify-between mb-4">
-              <div><span class="text-2xl font-bold text-blue-600 dark:text-blue-400">$799,000</span></div>
-              <div class="flex items-center">
-                <div class="text-yellow-400 mr-2">★★★★☆</div>
-                <span class="text-gray-500 text-sm">(210 reseñas)</span>
-              </div>
-            </div>
-            <div class="flex space-x-2">
-              <button class="ver-detalles-btn bg-green-600 text-white px-3 py-2 rounded-lg hover:bg-green-700 transition duration-300 flex-1 text-sm" data-product-id="samsung-s23">Ver Detalles</button>
-              <button class="add-to-cart-btn bg-blue-600 text-white px-3 py-2 rounded-lg hover:bg-blue-700 transition duration-300 flex-1 text-sm" data-product="Samsung S23" data-price="799000" data-id="samsung-s23">Comprar</button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Producto 7 -->
-        <div class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition duration-300 transform hover:-translate-y-1 product-card" data-category="componentes" data-price="350000" data-product-id="ssd-1tb">
-          <div class="bg-gradient-to-br from-gray-100 to-gray-200 h-48 flex items-center justify-center relative overflow-hidden">
-            <img src="https://images.unsplash.com/photo-1581291518857-4e27b48ff24e?w=800" alt="SSD 1TB" class="w-full h-full object-cover hover:scale-105 transition-transform duration-300" loading="lazy">
-          </div>
-          <div class="p-6">
-            <h3 class="text-lg font-bold mb-2 text-gray-800 dark:text-gray-100">SSD NVMe 1TB</h3>
-            <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">Alto rendimiento para cargas y juegos</p>
-            <div class="flex items-center justify-between mb-4">
-              <div><span class="text-2xl font-bold text-blue-600 dark:text-blue-400">$350,000</span></div>
-              <div class="flex items-center">
-                <div class="text-yellow-400 mr-2">★★★★☆</div>
-                <span class="text-gray-500 text-sm">(98 reseñas)</span>
-              </div>
-            </div>
-            <div class="flex space-x-2">
-              <button class="ver-detalles-btn bg-green-600 text-white px-3 py-2 rounded-lg hover:bg-green-700 transition duration-300 flex-1 text-sm" data-product-id="ssd-1tb">Ver Detalles</button>
-              <button class="add-to-cart-btn bg-blue-600 text-white px-3 py-2 rounded-lg hover:bg-blue-700 transition duration-300 flex-1 text-sm" data-product="SSD NVMe 1TB" data-price="350000" data-id="ssd-1tb">Comprar</button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Producto 8 -->
-        <div class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition duration-300 transform hover:-translate-y-1 product-card" data-category="accesorios" data-price="45000" data-product-id="audifonos-usb">
-          <div class="bg-gradient-to-br from-gray-100 to-gray-200 h-48 flex items-center justify-center relative overflow-hidden">
-            <img src="https://images.unsplash.com/photo-1512496015851-9f1b0a1699a6?w=800" alt="Audífonos USB" class="w-full h-full object-cover hover:scale-105 transition-transform duration-300" loading="lazy">
-          </div>
-          <div class="p-6">
-            <h3 class="text-lg font-bold mb-2 text-gray-800 dark:text-gray-100">Audífonos USB</h3>
-            <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">Sonido claro y micrófono integrado</p>
-            <div class="flex items-center justify-between mb-4">
-              <div><span class="text-2xl font-bold text-blue-600 dark:text-blue-400">$45,000</span></div>
-              <div class="flex items-center">
-                <div class="text-yellow-400 mr-2">★★★★☆</div>
-                <span class="text-gray-500 text-sm">(37 reseñas)</span>
-              </div>
-            </div>
-            <div class="flex space-x-2">
-              <button class="ver-detalles-btn bg-green-600 text-white px-3 py-2 rounded-lg hover:bg-green-700 transition duration-300 flex-1 text-sm" data-product-id="audifonos-usb">Ver Detalles</button>
-              <button class="add-to-cart-btn bg-blue-600 text-white px-3 py-2 rounded-lg hover:bg-blue-700 transition duration-300 flex-1 text-sm" data-product="Audífonos USB" data-price="45000" data-id="audifonos-usb">Comprar</button>
-            </div>
-          </div>
-        </div>
-
+      <div id="productos-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 items-stretch auto-rows-fr">
       </div>
 
-      <!-- PAGINACIÓN (estructura según PDF) -->
+      <!-- PAGINACIÓN -->
       <div class="mt-12 flex justify-center">
-        <nav id="pagination" class="flex space-x-2" aria-label="Paginación">
-          <!-- Los botones serán generados por main.js -->
-        </nav>
+        <nav id="pagination" class="flex space-x-2" aria-label="Paginación"></nav>
       </div>
     </section>
 
@@ -362,7 +217,7 @@
         <div>
           <h3 class="text-lg font-semibold mb-4">Atención</h3>
           <ul class="space-y-2 text-gray-400">
-            <li><a href="#" class="hover:text-white">Contacto</a></li>
+            <li><a href="./contactenos.html" class="hover:text-white">Contacto</a></li>
             <li><a href="#" class="hover:text-white">Envíos</a></li>
             <li><a href="#" class="hover:text-white">Devoluciones</a></li>
           </ul>
@@ -383,8 +238,6 @@
       </div>
     </div>
   </footer>
-
-  <!-- Enlaza el main.js (contiene la lógica de búsqueda/filtrado/paginación que te pasé) -->
-<script src="../js/main.js" defer></script>
+  <script src="../js/main.js" defer></script>
 </body>
 </html>

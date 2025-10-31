@@ -1,0 +1,345 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>TechStore Pro — Contáctanos</title>
+  <link rel="stylesheet" href="../output.css" />
+</head>
+<body class="bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-gray-100 font-sans transition-colors duration-300">
+
+  <!-- HEADER (idéntico al index/productos para reutilizar main.js) -->
+  <header class="bg-white dark:bg-gray-900 shadow-lg sticky top-0 z-50 transition-colors duration-500">
+    <nav class="relative max-w-7xl mx-auto px-4 py-4">
+      <div class="flex items-center justify-between relative">
+
+        <!-- LOGO -->
+        <div class="flex items-center flex-shrink-0">
+          <div class="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-3 py-2 rounded-lg mr-3">
+            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+              <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"/>
+            </svg>
+          </div>
+          <h1 class="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+            <a href="./index.html" class="no-underline">TechStore Pro</a>
+          </h1>
+        </div>
+
+        <!-- MENÚ (centrado en desktop, sin subrayado) -->
+        <div class="hidden md:flex absolute left-1/2 transform -translate-x-1/2 space-x-6">
+          <a href="./index.html" class="text-gray-700 dark:text-gray-200 hover:text-blue-600 font-medium transition-colors duration-200 relative group">
+            Inicio <span class="absolute -bottom-1 left-0 w-full h-0.5 bg-blue-600"></span>
+          </a>
+          <a href="./productos.html" class="text-gray-700 dark:text-gray-200 hover:text-blue-600 font-medium transition-colors duration-200 relative group">
+            Productos <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-600 transition-all duration-200 group-hover:w-full"></span>
+          </a>
+          <a href="./contactenos.html" class="text-gray-700 dark:text-gray-200 hover:text-blue-600 font-medium transition-colors duration-200 relative group">
+            Contacto <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-600 transition-all duration-200 group-hover:w-full"></span>
+          </a>
+        </div
+
+        <!-- ICONOS (derecha) -->
+        <div class="flex items-center space-x-3 absolute right-1 top-15">
+          <!-- TOGGLE TEMA -->
+          <button id="theme-toggle" class="p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition" aria-label="Alternar tema">
+            <svg id="theme-toggle-light-icon" xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 hidden" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="12" cy="12" r="5"/>
+              <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+            </svg>
+            <svg id="theme-toggle-dark-icon" xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 hidden" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/>
+            </svg>
+          </button>
+
+          <!-- CARRITO -->
+          <a href="./car.html" class="relative group p-2 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 dark:hover:from-gray-800 dark:hover:to-gray-700 rounded-lg transition-all duration-300 transform hover:scale-105" aria-label="Carrito">
+            <svg class="w-6 h-6 text-gray-700 dark:text-gray-200 transition-all duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-1.1 5m1.1-5l10 0m-10 0v5m10-5v5m0 0a2 2 0 11-4 0m-6 0a2 2 0 114 0"/>
+            </svg>
+            <span id="cart-counter" class="absolute -top-2 -right-2 bg-gradient-to-r from-red-500 via-pink-500 to-red-600 text-white text-xs font-bold rounded-full min-w-5 h-5 flex items-center justify-center px-1 shadow-lg border-2 border-white" style="display:none;">0</span>
+          </a>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <!-- MAIN: layout de 2 columnas (izq: form grande, der: 3 tarjetas apiladas) -->
+  <main class="max-w-7xl mx-auto px-4 py-10">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+      <!-- Columna izquierda: formulario (ocupa 7/12) -->
+      <section class="lg:col-span-7">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 hover:shadow-2xl transform transition duration-300">
+          <h2 class="text-2xl font-bold mb-4">Envíanos un mensaje</h2>
+
+          <form class="space-y-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">Nombre completo *</label>
+                <input type="text" placeholder="Tu nombre completo" class="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-150" />
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">Correo electrónico *</label>
+                <input type="email" placeholder="tu@email.com" class="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-150" />
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">Teléfono</label>
+                <input type="tel" placeholder="+57 300 123 4567" class="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 transition-colors duration-150" />
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">Tipo de consulta *</label>
+                <select class="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 transition-colors duration-150">
+                  <option>Selecciona un tema</option>
+                  <option>Ventas</option>
+                  <option>Soporte</option>
+                </select>
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">Mensaje *</label>
+              <textarea rows="7" placeholder="Describe tu consulta o mensaje en detalle..." class="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 transition-colors duration-150"></textarea>
+            </div>
+
+            <div class="flex items-start gap-3">
+              <input type="checkbox" id="policy" class="mt-1 accent-blue-600" />
+              <label for="policy" class="text-sm text-gray-600 dark:text-gray-300">He leído y acepto la <a href="#" class="text-blue-600 dark:text-blue-400 underline">política de privacidad</a> y el tratamiento de mis datos personales *</label>
+            </div>
+
+            <div>
+              <button type="button" class="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-3 rounded-lg font-semibold hover:from-blue-700 hover:to-purple-700 transition transform hover:-translate-y-0.5">Enviar Mensaje</button>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <!-- Columna derecha: 3 tarjetas apiladas (ocupa 5/12) -->
+      <aside class="lg:col-span-5 space-y-6">
+        <!-- Tarjeta 1: Información de Contacto -->
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 hover:shadow-2xl transform transition duration-300">
+          <h3 class="text-xl font-bold mb-4">Información de Contacto</h3>
+
+          <ul class="space-y-5">
+            <!-- Oficina Principal -->
+            <li class="flex items-start gap-4">
+              <div class="flex-shrink-0">
+                <!-- SVG con fondo azul claro (cambia con dark) -->
+                <div class="w-10 h-10 rounded-lg flex items-center justify-center bg-blue-100 dark:bg-gradient-to-r dark:from-blue-700 dark:to-indigo-700">
+                  <svg class="w-5 h-5 text-blue-600 dark:text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 2L2 7l10 5 10-5-10-5z" />
+                    <path d="M2 17l10 5 10-5" />
+                    <path d="M2 12l10 5 10-5" />
+                  </svg>
+                </div>
+              </div>
+              <div>
+                <div class="font-semibold dark:text-white">Oficina Principal</div>
+                <div class="text-sm text-gray-600 dark:text-gray-300">Carrera 11 # 93-07, Oficina 501<br />Bogotá D.C., Colombia</div>
+              </div>
+            </li>
+
+            <!-- Teléfonos -->
+            <li class="flex items-start gap-4">
+              <div class="flex-shrink-0">
+                <div class="w-10 h-10 rounded-lg flex items-center justify-center bg-green-100 dark:bg-gradient-to-r dark:from-green-600 dark:to-emerald-500">
+                  <svg class="w-5 h-5 text-green-600 dark:text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" xmlns="http://www.w3.org/2000/svg"><path d="M22 16.92V21a1 1 0 0 1-1.11 1 19 19 0 0 1-8.63-3.1 19 19 0 0 1-6-6A19 19 0 0 1 2 3.11 1 1 0 0 1 3 2h4.09a1 1 0 0 1 1 .75c.12.6.36 1.75.88 2.82a1 1 0 0 1-.24 1.05L8.7 8.7a14 14 0 0 0 6 6l1.08-1.08a1 1 0 0 1 1.05-.24c1.07.52 2.22.76 2.82.88a1 1 0 0 1 .75 1V21z"/></svg>
+                </div>
+              </div>
+              <div>
+                <div class="font-semibold dark:text-white">Teléfonos</div>
+                <div class="text-sm text-gray-600 dark:text-gray-300">Línea fija: +57 (1) 234-5678<br>Celular: +57 300 123 4567</div>
+              </div>
+            </li>
+
+            <!-- Correos -->
+            <li class="flex items-start gap-4">
+              <div class="flex-shrink-0">
+                <div class="w-10 h-10 rounded-lg flex items-center justify-center bg-purple-100 dark:bg-gradient-to-r dark:from-purple-600 dark:to-violet-500">
+                  <svg class="w-5 h-5 text-purple-600 dark:text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" xmlns="http://www.w3.org/2000/svg"><path d="M3 8l9 6 9-6"/></svg>
+                </div>
+              </div>
+              <div>
+                <div class="font-semibold dark:text-white">Correos Departamentales</div>
+                <div class="text-sm text-gray-600 dark:text-gray-300">Ventas: ventas@techstore.co<br>Soporte: soporte@techstore.co</div>
+              </div>
+            </li>
+
+            <!-- Horarios -->
+            <li class="flex items-start gap-4">
+              <div class="flex-shrink-0">
+                <div class="w-10 h-10 rounded-lg flex items-center justify-center bg-orange-100 dark:bg-gradient-to-r dark:from-orange-500 dark:to-amber-500">
+                  <svg class="w-5 h-5 text-orange-600 dark:text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="9"/><path d="M12 7v6l4 2"/></svg>
+                </div>
+              </div>
+              <div>
+                <div class="font-semibold dark:text-white">Horarios de Atención</div>
+                <div class="text-sm text-gray-600 dark:text-gray-300">Lunes a Viernes: 8:00 AM - 6:00 PM<br>Sábados: 9:00 AM - 3:00 PM</div>
+              </div>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Tarjeta 2: Síguenos en Redes Sociales -->
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 hover:shadow-2xl transform transition duration-300">
+          <h3 class="text-xl font-bold mb-4">Síguenos en Redes Sociales</h3>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <!-- Facebook (reemplazado por SVG optimizado) -->
+            <a href="#" class="flex items-center gap-3 p-3 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 hover:shadow-lg transition transform hover:-translate-y-0.5">
+              <div class="w-10 h-10 flex items-center justify-center rounded-md bg-blue-100 dark:bg-blue-700">
+                <!-- Facebook SVG (optimizado) -->
+                <svg class="w-6 h-6 text-blue-600 dark:text-white" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M22.675 0h-21.35C.593 0 0 .6 0 1.333v21.334C0 23.4.593 24 1.325 24h11.495v-9.294H9.847v-3.622h2.973V8.413c0-2.943 1.796-4.55 4.419-4.55 1.258 0 2.337.093 2.651.135v3.07h-1.82c-1.429 0-1.705.68-1.705 1.676v2.198h3.406l-.444 3.622h-2.962V24h5.805c.732 0 1.325-.6 1.325-1.333V1.333C24 .6 23.407 0 22.675 0z"/>
+                </svg>
+              </div>
+              <div>
+                <div class="font-medium">Facebook</div>
+                <div class="text-xs text-gray-500 dark:text-gray-300">@techstore.co</div>
+              </div>
+            </a>
+
+            <!-- Instagram (reemplazado por SVG optimizado + gradient bg) -->
+            <a href="#" class="flex items-center gap-3 p-3 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 hover:shadow-lg transition transform hover:-translate-y-0.5">
+              <div class="w-10 h-10 flex items-center justify-center rounded-md bg-gradient-to-tr from-pink-300 via-purple-300 to-yellow-300 dark:bg-gradient-to-tr dark:from-pink-600 dark:via-purple-600 dark:to-yellow-500">
+                <!-- Instagram SVG (optimizado) -->
+                <svg class="w-5 h-5 text-pink-600 dark:text-white" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M7.75 2h8.5A5.75 5.75 0 0 1 22 7.75v8.5A5.75 5.75 0 0 1 16.25 22h-8.5A5.75 5.75 0 0 1 2 16.25v-8.5A5.75 5.75 0 0 1 7.75 2zM12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm6.75-.25a1 1 0 1 0-2 0 1 1 0 0 0 2 0zM12 9a3 3 0 1 1 0 6 3 3 0 0 1 0-6z"/>
+                </svg>
+              </div>
+              <div>
+                <div class="font-medium">Instagram</div>
+                <div class="text-xs text-gray-500 dark:text-gray-300">@techstore_co</div>
+              </div>
+            </a>
+
+            <!-- Twitter (sin cambios) -->
+            <a href="#" class="flex items-center gap-3 p-3 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 hover:shadow-lg transition transform hover:-translate-y-0.5">
+              <div class="w-10 h-10 flex items-center justify-center rounded-md bg-sky-100 dark:bg-sky-700">
+                <svg class="w-5 h-5 text-sky-600 dark:text-white" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M22 5.9c-.6.3-1.3.6-2 .7.7-.4 1.2-1 1.4-1.7-.6.4-1.4.7-2.2.9C18.1 5 17.1 4.6 16 4.6c-1.8 0-3.2 1.5-3.2 3.3 0 .3 0 .5.1.8C9.6 8.5 6.6 6.9 4.6 4.2c-.3.5-.5 1.1-.5 1.8 0 1.1.6 2.1 1.6 2.7-.5 0-1-.2-1.4-.4v.1c0 1.6 1.1 3 2.6 3.3-.3.1-.7.1-1 .1-.2 0-.4 0-.6-.1.4 1.3 1.6 2.3 3.1 2.3-1.1.9-2.5 1.5-4 1.5-.3 0-.6 0-.9-.1C7.7 20.1 9.5 21 11.4 21c6.8 0 10.5-5.6 10.5-10.5v-.5c.8-.6 1.4-1.4 1.9-2.3-.8.4-1.6.6-2.4.7z"/></svg>
+              </div>
+              <div>
+                <div class="font-medium">Twitter/X</div>
+                <div class="text-xs text-gray-500 dark:text-gray-300">@techstore_co</div>
+              </div>
+            </a>
+
+            <!-- WhatsApp (reemplazado por SVG optimizado) -->
+            <a href="#" class="flex items-center gap-3 p-3 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 hover:shadow-lg transition transform hover:-translate-y-0.5">
+              <div class="w-10 h-10 flex items-center justify-center rounded-md bg-emerald-100 dark:bg-emerald-600">
+                <!-- WhatsApp SVG (optimizado) -->
+                <svg class="w-6 h-6 text-emerald-600 dark:text-white" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M20.52 3.48A11.9 11.9 0 0 0 12 0C5.37 0 .1 5.27.1 11.9a11.8 11.8 0 0 0 1.55 5.9L0 24l6.36-1.66a11.86 11.86 0 0 0 5.64 1.44h.01C18.63 23.78 24 18.4 24 11.9a11.87 11.87 0 0 0-3.48-8.42zM12 21.5a9.7 9.7 0 0 1-4.93-1.34l-.35-.2-3.77.98 1-3.68-.22-.38A9.6 9.6 0 0 1 2.5 11.9c0-5.26 4.28-9.54 9.55-9.54 2.56 0 4.96 1 6.78 2.82A9.52 9.52 0 0 1 21.5 12c0 5.26-4.29 9.5-9.5 9.5zm5.34-7.06c-.3-.15-1.79-.88-2.06-.98-.27-.1-.47-.15-.67.15-.2.3-.77.98-.94 1.18-.17.2-.35.22-.64.07-.3-.15-1.25-.46-2.38-1.47-.88-.79-1.48-1.76-1.65-2.06-.17-.3-.02-.46.13-.61.13-.13.3-.35.46-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.67-1.61-.92-2.21-.24-.58-.49-.5-.67-.5h-.57c-.2 0-.52.07-.8.37s-1.05 1.03-1.05 2.5 1.08 2.9 1.24 3.1c.15.2 2.1 3.18 5.1 4.45.7.3 1.25.47 1.68.6.7.22 1.33.19 1.84.12.56-.08 1.79-.73 2.05-1.43.25-.7.25-1.3.18-1.43-.07-.13-.27-.2-.57-.35z"/>
+                </svg>
+              </div>
+              <div>
+                <div class="font-medium">WhatsApp</div>
+                <div class="text-xs text-gray-500 dark:text-gray-300">Chat directo</div>
+              </div>
+            </a>
+
+            <!-- YouTube -->
+            <a href="#" class="flex items-center gap-3 p-3 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 hover:shadow-lg transition transform hover:-translate-y-0.5">
+              <div class="w-10 h-10 flex items-center justify-center rounded-md bg-rose-50 dark:bg-rose-600">
+                <svg class="w-5 h-5 text-red-600 dark:text-white" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M23 7s-.2-1.6-.8-2.3C21 4 19.6 4 19.1 4H4.9C4.4 4 3 4 1.8 4.7 1.2 5.4 1 7 1 7s-.2 1.8-.2 3.7v1.6C.9 16.3 1 18 1 18s.2 1.6.8 2.3C2.9 21 4.4 21 4.9 21h14.2c.5 0 2 .1 2.8-.7.6-.7.8-2.3.8-2.3s.2-1.8.2-3.7v-1.6C23.1 8.8 23 7 23 7zM9 15V9l6 3-6 3z"/></svg>
+              </div>
+              <div>
+                <div class="font-medium">YouTube</div>
+                <div class="text-xs text-gray-500 dark:text-gray-300">TechStore TV</div>
+              </div>
+            </a>
+
+            <!-- LinkedIn -->
+            <a href="#" class="flex items-center gap-3 p-3 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 hover:shadow-lg transition transform hover:-translate-y-0.5">
+              <div class="w-10 h-10 flex items-center justify-center rounded-md bg-slate-100 dark:bg-slate-700">
+                <svg class="w-5 h-5 text-sky-700 dark:text-white" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M4.98 3.5C4.98 4.88 3.86 6 2.48 6S.0 4.88.0 3.5 1.12 1 2.5 1 4.98 2.12 4.98 3.5zM.5 8h4v12h-4zM8 8h3.8v1.7h.1c.5-.9 1.6-1.8 3.3-1.8C18.8 7.9 21 9.9 21 13.7V20h-4v-6.1c0-1.5 0-3.4-2.1-3.4-2.1 0-2.4 1.6-2.4 3.3V20H8z"/></svg>
+              </div>
+              <div>
+                <div class="font-medium">LinkedIn</div>
+                <div class="text-xs text-gray-500 dark:text-gray-300">TechStore Pro</div>
+              </div>
+            </a>
+          </div>
+        </div>
+
+        <!-- Tarjeta 3: ¿Por qué elegirnos? -->
+        <div class="bg-gradient-to-r from-white to-white/0 dark:from-gray-900 dark:to-gray-900/0 rounded-xl shadow-lg p-6 hover:shadow-2xl transform transition duration-300">
+          <div class="rounded-lg p-6 bg-white dark:bg-gradient-to-r dark:from-blue-800 dark:to-purple-800">
+            <h3 class="text-xl font-bold mb-4 dark:text-white">¿Por qué elegirnos?</h3>
+            <ul class="space-y-3 text-gray-700 dark:text-gray-100">
+              <li class="flex items-start gap-3">
+                <svg class="w-5 h-5 text-blue-600 dark:text-white mt-1" viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z"/></svg>
+                <span>Atención personalizada y especializada</span>
+              </li>
+              <li class="flex items-start gap-3">
+                <svg class="w-5 h-5 text-blue-600 dark:text-white mt-1" viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z"/></svg>
+                <span>Soporte técnico post-venta incluido</span>
+              </li>
+              <li class="flex items-start gap-3">
+                <svg class="w-5 h-5 text-blue-600 dark:text-white mt-1" viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z"/></svg>
+                <span>Garantía extendida en todos nuestros productos</span>
+              </li>
+              <li class="flex items-start gap-3">
+                <svg class="w-5 h-5 text-blue-600 dark:text-white mt-1" viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z"/></svg>
+                <span>Envío gratis en compras superiores a $500.000</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <!-- FOOTER (idéntico a index/productos para consistencia) -->
+  <footer id="contacto" class="bg-gray-900 dark:bg-gray-950 text-white py-12 transition-colors duration-500">
+    <div class="max-w-7xl mx-auto px-4">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div>
+          <div class="flex items-center mb-4">
+            <div class="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-2 rounded-lg mr-3">
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"/></svg>
+            </div>
+            <h3 class="text-xl font-bold">TechStore Pro</h3>
+          </div>
+          <p class="text-gray-400 mb-4">Tu tienda de tecnología de confianza con los mejores productos y precios.</p>
+        </div>
+
+        <div>
+          <h3 class="text-lg font-semibold mb-4">Enlaces</h3>
+          <ul class="space-y-2 text-gray-400">
+            <li><a href="./index.html" class="hover:text-white transition-colors duration-200">Inicio</a></li>
+            <li><a href="./productos.html" class="hover:text-white transition-colors duration-200">Productos</a></li>
+            <li><a href="carrito.html" class="hover:text-white transition-colors duration-200">Carrito</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h3 class="text-lg font-semibold mb-4">Atención</h3>
+          <ul class="space-y-2 text-gray-400">
+            <li><a href="#" class="hover:text-white transition-colors duration-200">Contacto</a></li>
+            <li><a href="#" class="hover:text-white transition-colors duration-200">Envíos</a></li>
+            <li><a href="#" class="hover:text-white transition-colors duration-200">Devoluciones</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h3 class="text-lg font-semibold mb-4">Legal</h3>
+          <ul class="space-y-2 text-gray-400">
+            <li><a href="#" class="hover:text-white transition-colors duration-200">Términos</a></li>
+            <li><a href="#" class="hover:text-white transition-colors duration-200">Privacidad</a></li>
+            <li><a href="#" class="hover:text-white transition-colors duration-200">Cookies</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
+        <p>&copy; 2025 TechStore Pro. Todos los derechos reservados.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- enlaza main.js (usa los mismos IDs: theme-toggle, theme-toggle-light-icon, theme-toggle-dark-icon, cart-counter) -->
+  <script src="../js/main.js" defer></script>
+</body>
+</html>
