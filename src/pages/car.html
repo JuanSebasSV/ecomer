@@ -6,7 +6,7 @@
   <title>TechStore Pro — Carrito</title>
   <link rel="stylesheet" href="../output.css" />
 </head>
-<body class="bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-gray-100 font-sans transition-colors duration-300">
+<body class="bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-gray-100 font-sans transition-colors duration-300 flex flex-col min-h-screen">
 
   <!-- HEADER -->
   <header class="bg-white dark:bg-gray-900 shadow-lg sticky top-0 z-50 transition-colors duration-500">
@@ -34,7 +34,7 @@
             Contacto <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-600 transition-all duration-200 group-hover:w-full"></span>
           </a>
         </div>
-        <div class="flex items-center space-x-3 absolute right-1 top-15">
+        <div class="flex items-center space-x-3 absolute right-4 top-4">
           <!-- BOTÓN TEMA -->
           <button id="theme-toggle" class="p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition" aria-label="Alternar tema">
             <!-- SOL (light icon) -->
@@ -60,7 +60,7 @@
   </header>
 
   <!-- MAIN -->
-  <main class="max-w-7xl mx-auto px-4 py-10">
+  <main class="max-w-7xl mx-auto px-4 py-10 flex-grow">
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
       <section class="lg:col-span-8">
         <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 hover:shadow-2xl transition duration-300">
@@ -111,13 +111,15 @@
   </main>
 
   <!-- FOOTER -->
-  <footer class="bg-gray-900 dark:bg-gray-950 text-white py-12 transition-colors duration-500">
+  <footer id="contacto" class="bg-gray-900 dark:bg-gray-950 text-white py-12 transition-colors duration-500">
     <div class="max-w-7xl mx-auto px-4">
       <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
         <div>
           <div class="flex items-center mb-4">
             <div class="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-2 rounded-lg mr-3">
-              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"/></svg>
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z" />
+              </svg>
             </div>
             <h3 class="text-xl font-bold">TechStore Pro</h3>
           </div>
@@ -127,27 +129,27 @@
         <div>
           <h3 class="text-lg font-semibold mb-4">Enlaces</h3>
           <ul class="space-y-2 text-gray-400">
-            <li><a href="./index.html" class="hover:text-white">Inicio</a></li>
-            <li><a href="./productos.html" class="hover:text-white">Productos</a></li>
-            <li><a href="./car.html" class="hover:text-white">Carrito</a></li>
+            <li><a href="./index.html" class="hover:text-white transition-colors duration-200">Inicio</a></li>
+            <li><a href="./productos.html" class="hover:text-white transition-colors duration-200">Productos</a></li>
+            <li><a href="carrito.html" class="hover:text-white transition-colors duration-200">Carrito</a></li>
           </ul>
         </div>
 
         <div>
           <h3 class="text-lg font-semibold mb-4">Atención</h3>
           <ul class="space-y-2 text-gray-400">
-            <li><a href="./contactenos.html" class="hover:text-white">Contacto</a></li>
-            <li><a href="#" class="hover:text-white">Envíos</a></li>
-            <li><a href="#" class="hover:text-white">Devoluciones</a></li>
+            <li><a href="./contactenos.html" class="hover:text-white transition-colors duration-200">Contacto</a></li>
+            <li><a href="#" class="hover:text-white transition-colors duration-200">Envíos</a></li>
+            <li><a href="#" class="hover:text-white transition-colors duration-200">Devoluciones</a></li>
           </ul>
         </div>
 
         <div>
           <h3 class="text-lg font-semibold mb-4">Legal</h3>
           <ul class="space-y-2 text-gray-400">
-            <li><a href="#" class="hover:text-white">Términos</a></li>
-            <li><a href="#" class="hover:text-white">Privacidad</a></li>
-            <li><a href="#" class="hover:text-white">Cookies</a></li>
+            <li><a href="#" class="hover:text-white transition-colors duration-200">Términos</a></li>
+            <li><a href="#" class="hover:text-white transition-colors duration-200">Privacidad</a></li>
+            <li><a href="#" class="hover:text-white transition-colors duration-200">Cookies</a></li>
           </ul>
         </div>
       </div>
