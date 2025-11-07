@@ -38,4 +38,14 @@ router.post("/", async (req, res) => {
   }
 });
 
+// Traer los datos de la base de datos
+router.get("/", async (req, res) => {
+  try {
+    const listarproductos = await Productos.find();
+    res.json(listarproductos);
+  } catch (error) {
+    res.status(500).json({ message: "Error al obtener los productos" });
+  }
+});
+
 export default router;

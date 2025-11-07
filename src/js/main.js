@@ -23,44 +23,88 @@ if (heroSection) {
   setInterval(changeBackground, 5000);
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-  // === MODO OSCURO ===
+// === MODO OSCURO (versión robusta: init inmediato si es necesario) ===
+(function () {
+  function initThemeToggle() {
+    const themeToggleBtn = document.getElementById('theme-toggle');
+    const lightIcon = document.getElementById('theme-toggle-light-icon');
+    const darkIcon = document.getElementById('theme-toggle-dark-icon');
 
-  const themeToggleBtn = document.getElementById('theme-toggle');
-  const lightIcon = document.getElementById('theme-toggle-light-icon');
-  const darkIcon = document.getElementById('theme-toggle-dark-icon');
+    if (!themeToggleBtn || !lightIcon || !darkIcon) {
+      console.error("⚠️ theme-toggle o iconos no encontrados");
+      return;
+    }
 
-  if (!themeToggleBtn) {
-    console.error("⚠️ No se encontró el botón #theme-toggle");
-    return;
+    // Evitar inicializar más de una vez
+    if (themeToggleBtn.dataset.themeInit === "1") return;
+    themeToggleBtn.dataset.themeInit = "1";
+
+    // Por defecto esconder ambos (evita flash donde se ven ambos)
+    lightIcon.style.display = 'none';
+    darkIcon.style.display = 'none';
+    lightIcon.setAttribute('aria-hidden', 'true');
+    darkIcon.setAttribute('aria-hidden', 'true');
+
+    function applyIconVisibility(isDark) {
+      if (isDark) {
+        lightIcon.style.display = 'none';
+        darkIcon.style.display = 'inline-block';
+        lightIcon.setAttribute('aria-hidden', 'true');
+        darkIcon.setAttribute('aria-hidden', 'false');
+      } else {
+        lightIcon.style.display = 'inline-block';
+        darkIcon.style.display = 'none';
+        lightIcon.setAttribute('aria-hidden', 'false');
+        darkIcon.setAttribute('aria-hidden', 'true');
+      }
+    }
+
+    // Determinar estado inicial
+    const stored = localStorage.getItem('theme'); // 'dark' | 'light' | null
+    const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const initialIsDark = (stored === 'dark') || (stored === null && prefersDark);
+
+    // Aplicar clase al documento y mostrar icono correcto
+    document.documentElement.classList.toggle('dark', !!initialIsDark);
+    applyIconVisibility(!!initialIsDark);
+
+    // Click handler
+    themeToggleBtn.addEventListener('click', (ev) => {
+      ev.preventDefault();
+      const isDarkNow = document.documentElement.classList.toggle('dark');
+      localStorage.setItem('theme', isDarkNow ? 'dark' : 'light');
+      applyIconVisibility(isDarkNow);
+    });
+
+    // Escuchar cambio de preferencia del sistema solo si no hay preferencia guardada
+    if (window.matchMedia) {
+      const mq = window.matchMedia('(prefers-color-scheme: dark)');
+      const onChange = e => {
+        if (!localStorage.getItem('theme')) {
+          const systemDark = !!e.matches;
+          document.documentElement.classList.toggle('dark', systemDark);
+          applyIconVisibility(systemDark);
+        }
+      };
+      // compatibilidad: addEventListener('change') o addListener
+      try {
+        mq.addEventListener('change', onChange);
+      } catch (err) {
+        try { mq.addListener(onChange); } catch (e) { /* ignore */ }
+      }
+    }
   }
 
-  // Verificar tema guardado
-  if (
-    localStorage.getItem('theme') === 'dark' ||
-    (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)
-  ) {
-    document.documentElement.classList.add('dark');
-    darkIcon.classList.remove('hidden');
-    lightIcon.classList.add('hidden');
+  // Init inmediato si el DOM ya está listo, o on DOMContentLoaded si no
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initThemeToggle);
   } else {
-    document.documentElement.classList.remove('dark');
-    lightIcon.classList.remove('hidden');
-    darkIcon.classList.add('hidden');
+    initThemeToggle();
   }
+})();
 
-  // Evento de clic
-  themeToggleBtn.addEventListener('click', () => {
-    document.documentElement.classList.toggle('dark');
-    const isDark = document.documentElement.classList.contains('dark');
-    lightIcon.classList.toggle('hidden', isDark);
-    darkIcon.classList.toggle('hidden', !isDark);
-    localStorage.setItem('theme', isDark ? 'dark' : 'light');
-  });
-})
-
-
-// Script de productos (buscar, filtrar, ordenar, paginar)
+// ------------------ Script de productos (buscar, filtrar, ordenar, paginar) ------------------
+// (NO MODIFICADO visualmente; se dejó tal como lo tenías)
 const PRODUCTS = [
   // --- Laptops (10) ---
   {
@@ -521,6 +565,10 @@ const PRODUCTS = [
   }
 ];
 
+// === Exponer globalmente la lista de productos para car.html (solicitado) ===
+window.PRODUCTS = PRODUCTS;
+
+
 // Estado de la interfaz
 let state = {
   query: '',
@@ -774,8 +822,8 @@ function showNotification(message, type = "info") {
   }, 3500);
 }
 
-//REDIRECCIÓN POR CATEGORÍAS
-// Esperar a que el DOM cargue
+
+// REDIRECCIÓN POR CATEGORÍAS
 document.addEventListener('DOMContentLoaded', () => {
   // Si hay recuadros de categorías (index.html)
   const categoryCards = document.querySelectorAll('[data-category]');
@@ -806,65 +854,25 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
-// === CONTADOR DE CARRITO ===
+
+// === CONTADOR DE CARRITO (visual) ===
 let cartCount = 0;
 const cartCounter = document.getElementById("cart-counter");
 
-// Delegación de eventos global
+// Delegación de eventos global (añadir al carrito desde productos)
 document.addEventListener("click", (e) => {
   const addBtn = e.target.closest(".add-to-cart-btn");
   const detailsBtn = e.target.closest(".ver-detalles-btn");
 
-  // BOTÓN COMPRAR
+  // BOTÓN COMPRAR (visual + persistencia)
   if (addBtn) {
-    const title = addBtn.dataset.product;
-    cartCount++;
-    if (cartCounter) {
-      cartCounter.style.display = "flex";
-      cartCounter.textContent = cartCount;
-    }
-    showNotification(`Tu producto "${title}" ha sido añadido al carrito 🛒`, "success");
-  }
-
-  // BOTÓN DETALLES
-  if (detailsBtn) {
-    const pid = detailsBtn.dataset.productId;
-    showNotification(`Detalles del producto (${pid})`, "info");
-  }
-});
-
-// Inicializar render al cargar la página
-document.addEventListener('DOMContentLoaded', () => {
-  if (grid) render();
-  console.log('✅ Script de productos inicializado correctamente (40 productos cargados)');
-});
-
-
-// ---------- Persistencia de carrito desde main.js ----------
-const CART_KEY = 'techstore_cart';
-
-function readCartLocal() {
-  try {
-    return JSON.parse(localStorage.getItem(CART_KEY)) || [];
-  } catch (e) { return []; }
-}
-
-function writeCartLocal(cart) {
-  localStorage.setItem(CART_KEY, JSON.stringify(cart));
-  // disparar storage para la misma pestaña para que car.html reaccione si está abierta
-  window.dispatchEvent(new StorageEvent('storage', { key: CART_KEY, newValue: JSON.stringify(cart) }));
-}
-
-// Modificar la delegación existente de botones (reemplaza la parte que hace alert)
-document.addEventListener('click', e => {
-  const addBtn = e.target.closest('.add-to-cart-btn');
-  if (addBtn) {
+    // intenta leer id/title/price/image defensivamente
     const id = addBtn.dataset.id || addBtn.dataset.productId || addBtn.dataset.product;
     const title = addBtn.dataset.product || addBtn.dataset.id || 'Producto';
     const price = Number(addBtn.dataset.price) || 0;
     const image = addBtn.closest('.product-card')?.querySelector('img')?.src || '';
 
-    // leer carrito
+    // leer carrito desde localStorage y persistir (se usan funciones definidas abajo)
     const cart = readCartLocal();
     const idx = cart.findIndex(i => i.id === id);
     if (idx === -1) {
@@ -882,21 +890,238 @@ document.addEventListener('click', e => {
       counterEl.textContent = total;
     }
 
-    // notificación (reusa función si existe, si no usa alert)
-    if (typeof showNotification === 'function') {
-      showNotification(`Tu producto "${title}" ha sido añadido al carrito 🛒`, 'success');
+    // notificación
+    showNotification(`Tu producto "${title}" ha sido añadido al carrito 🛒`, "success");
+  }
+
+  // BOTÓN DETALLES (reemplaza alert con notificación)
+  if (detailsBtn) {
+    const pid = detailsBtn.dataset.productId;
+    showNotification(`Detalles del producto (${pid})`, "info");
+  }
+});
+
+
+// Inicializar render al cargar la página (productos)
+document.addEventListener('DOMContentLoaded', () => {
+  if (grid) render();
+  console.log('✅ Script de productos inicializado correctamente (' + PRODUCTS.length + ' productos cargados)');
+});
+
+
+// ---------- Persistencia de carrito (global, main.js) ----------
+const CART_KEY = 'techstore_cart';
+
+function readCartLocal() {
+  try {
+    return JSON.parse(localStorage.getItem(CART_KEY)) || [];
+  } catch (e) { return []; }
+}
+
+function writeCartLocal(cart) {
+  try {
+    localStorage.setItem(CART_KEY, JSON.stringify(cart));
+    // disparar storage para la misma pestaña para que car.html reaccione si está abierta
+    try {
+      window.dispatchEvent(new StorageEvent('storage', { key: CART_KEY, newValue: JSON.stringify(cart) }));
+    } catch (e) {
+      // algunos navegadores no permiten construir StorageEvent de esa forma; como fallback, llamamos a un evento custom
+      const ev = new Event('techstore_cart_updated');
+      window.dispatchEvent(ev);
+    }
+  } catch (e) {
+    console.error('Error guardando carrito:', e);
+  }
+}
+
+
+// ---------- LÓGICA y RENDEREO para car.html (moved from car.html) ----------
+(function setupCartPageIntegration() {
+  // Ejecutar solo si estamos en una página con elementos del carrito (car.html)
+  // Buscamos elementos clave para decidir si activamos esta sección
+  function isCartPage() {
+    return !!document.getElementById('cart-items') || location.pathname.includes('car.html') || location.pathname.includes('/pages/car.html');
+  }
+
+  // Helper: actualizar contador en header según localStorage
+  function updateCartCounterUI() {
+    const cart = readCartLocal();
+    const count = cart.reduce((s,i)=> s + (i.qty||0), 0);
+    const el = document.getElementById('cart-counter');
+    if (!el) return;
+    if (count > 0) {
+      el.style.display = 'flex';
+      el.textContent = count;
     } else {
-      alert('Añadido al carrito: ' + title);
+      el.style.display = 'none';
     }
   }
 
-  const detailsBtn = e.target.closest('.ver-detalles-btn');
-  if (detailsBtn) {
-    const pid = detailsBtn.dataset.productId;
-    if (typeof showNotification === 'function') {
-      showNotification(`Detalles del producto (${pid})`, 'info');
+  // Render carrito (usa window.PRODUCTS si el item solo contiene id+qty)
+  function renderCartItems() {
+    const itemsContainer = document.getElementById('cart-items');
+    const emptyText = document.getElementById('cart-empty-text');
+    const totalItemsEl = document.getElementById('cart-total-items');
+    const totalPriceEl = document.getElementById('cart-total-price');
+    const summarySubtotal = document.getElementById('summary-subtotal');
+    const summaryTotal = document.getElementById('summary-total');
+
+    if (!itemsContainer) return;
+    const cart = readCartLocal();
+
+    itemsContainer.innerHTML = '';
+    if (cart.length === 0) {
+      emptyText && emptyText.classList.remove('hidden');
     } else {
-      alert('Mostrar detalles de: ' + pid);
+      emptyText && emptyText.classList.add('hidden');
     }
+
+    let subtotal = 0;
+    let totalItems = 0;
+
+    cart.forEach(item => {
+      // item might be minimal ({id, qty}) or full ({id, title, price, image, qty})
+      let product = item;
+      if (!item.title || !item.price) {
+        // try to resolve from global products list
+        if (window.PRODUCTS && Array.isArray(window.PRODUCTS)) {
+          const full = window.PRODUCTS.find(p => p.id == item.id);
+          if (full) {
+            product = {
+              id: item.id,
+              title: full.title,
+              price: full.price,
+              image: full.image,
+              qty: item.qty || 1
+            };
+          } else {
+            // fallback: keep item as-is but ensure fields exist
+            product = {
+              id: item.id,
+              title: item.title || item.id,
+              price: item.price || 0,
+              image: item.image || '',
+              qty: item.qty || 1
+            };
+          }
+        } else {
+          // no PRODUCTS available: render minimal
+          product = {
+            id: item.id,
+            title: item.title || item.id,
+            price: item.price || 0,
+            image: item.image || '',
+            qty: item.qty || 1
+          };
+        }
+      }
+
+      subtotal += (product.price || 0) * (product.qty || 0);
+      totalItems += (product.qty || 0);
+
+      const row = document.createElement('div');
+      row.className = 'flex items-center gap-4 bg-gray-50 dark:bg-gray-900 rounded-lg p-4';
+
+      row.innerHTML = `
+        <img src="${product.image || 'https://via.placeholder.com/120'}" alt="${product.title}" class="w-20 h-20 object-cover rounded-md flex-shrink-0">
+        <div class="flex-1">
+          <div class="font-semibold text-gray-800 dark:text-gray-100">${product.title}</div>
+          <div class="text-sm text-gray-500 dark:text-gray-300">${formatPrice(product.price)}</div>
+          <div class="mt-2 flex items-center gap-2">
+            <button class="decrease-qty px-2 py-1 border rounded text-gray-700 dark:text-gray-200">-</button>
+            <span class="px-3 py-1 bg-white dark:bg-gray-800 rounded">${product.qty}</span>
+            <button class="increase-qty px-2 py-1 border rounded text-gray-700 dark:text-gray-200">+</button>
+            <button class="remove-item ml-4 text-sm text-rose-600 dark:text-rose-400">Eliminar</button>
+          </div>
+        </div>
+        <div class="text-right">
+          <div class="font-semibold text-gray-800 dark:text-gray-100">${formatPrice((product.price || 0) * (product.qty || 0))}</div>
+        </div>
+      `;
+
+      // attach handlers
+      row.querySelector('.increase-qty').addEventListener('click', () => {
+        updateQty(product.id, product.qty + 1);
+      });
+      row.querySelector('.decrease-qty').addEventListener('click', () => {
+        updateQty(product.id, Math.max(1, product.qty - 1));
+      });
+      row.querySelector('.remove-item').addEventListener('click', () => {
+        removeItem(product.id);
+      });
+
+      itemsContainer.appendChild(row);
+    });
+
+    // actualizar resumen
+    totalItemsEl && (totalItemsEl.textContent = totalItems);
+    totalPriceEl && (totalPriceEl.textContent = formatPrice(subtotal));
+    if (summarySubtotal) summarySubtotal.textContent = formatPrice(subtotal);
+    if (summaryTotal) summaryTotal.textContent = formatPrice(subtotal);
+    updateCartCounterUI();
   }
-});
+
+  function updateQty(id, qty) {
+    const cart = readCartLocal();
+    const idx = cart.findIndex(i => i.id === id);
+    if (idx === -1) return;
+    cart[idx].qty = qty;
+    writeCartLocal(cart);
+    renderCartItems();
+    showNotification('Cantidad actualizada', 'info');
+  }
+
+  function removeItem(id) {
+    let cart = readCartLocal();
+    cart = cart.filter(i => i.id !== id);
+    writeCartLocal(cart);
+    renderCartItems();
+    showNotification('Producto eliminado del carrito', 'info');
+  }
+
+  function clearCart() {
+    writeCartLocal([]);
+    renderCartItems();
+    showNotification('Carrito vaciado', 'info');
+  }
+
+  // Conectar botones y eventos sólo si estamos en la página del carrito
+  document.addEventListener('DOMContentLoaded', () => {
+    if (!isCartPage()) return;
+
+    // Inicial render
+    renderCartItems();
+
+    // Botones UI
+    document.getElementById('continue-shopping')?.addEventListener('click', () => {
+      window.location.href = './productos.html';
+    });
+
+    document.getElementById('empty-cart')?.addEventListener('click', () => {
+      if (confirm('¿Vaciar el carrito?')) clearCart();
+    });
+
+    document.getElementById('checkout-btn')?.addEventListener('click', () => {
+      const cart = readCartLocal();
+      if (!cart.length) {
+        alert('Tu carrito está vacío.');
+        return;
+      }
+      // Por ahora sólo simulamos
+      showNotification('Proceso de pago simulado (implementa tu gateway)', 'info');
+    });
+
+    // Escuchar storage para actualizar si cambian en otra pestaña
+    window.addEventListener('storage', (e) => {
+      if (!e.key || e.key === CART_KEY) {
+        renderCartItems();
+      }
+    });
+
+    // también escuchar custom fallback event (en writeCartLocal fallback)
+    window.addEventListener('techstore_cart_updated', () => {
+      renderCartItems();
+    });
+  });
+
+})(); // fin setupCartPageIntegration
