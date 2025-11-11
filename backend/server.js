@@ -2,7 +2,8 @@ import express from "express";
 import cors from "cors";
 import "./db/db.js"; // conexión a MongoDB
 import productosRouter from "./routes/productos.routes.js";
-import usersRouter from "./routes/user.routes.js"; 
+import usersRouter from "./routes/user.routes.js";
+import loginRouter from "./routes/login.routes.js";
 
 const app = express();
 
@@ -15,9 +16,10 @@ app.get("/", (req, res) => {
   res.send("Bienvenido al curso de Node + Express");
 });
 
-// Rutas principales
+// Rutas API
 app.use("/api/productos", productosRouter);
-app.use("/api/users", usersRouter); 
+app.use("/api/users", usersRouter);
+app.use("/api/login", loginRouter);
 
 // Servidor
 const PORT = 8081;

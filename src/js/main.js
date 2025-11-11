@@ -782,7 +782,7 @@ if (sortFilter) {
   });
 }
 
-// === NOTIFICACIONES FLOTANTES ===
+// === NOTIFICACIONES FLOTANTES (con botón de cierre) ===
 function showNotification(message, type = "info") {
   let container = document.getElementById("toast-container");
   if (!container) {
@@ -796,6 +796,7 @@ function showNotification(message, type = "info") {
 
   const toast = document.createElement("div");
   toast.className = `
+    relative flex items-start justify-between gap-3
     px-4 py-3 rounded-lg shadow-lg border
     transition-all duration-300 transform
     ${isDark
@@ -805,8 +806,30 @@ function showNotification(message, type = "info") {
     ${type === "info" ? "border-blue-500" : ""}
     opacity-0 translate-y-2
   `;
-  toast.textContent = message;
 
+  // Contenido del mensaje
+  const messageSpan = document.createElement("span");
+  messageSpan.textContent = message;
+  messageSpan.className = "flex-1";
+
+  // Botón de cierre (X)
+  const closeBtn = document.createElement("button");
+  closeBtn.innerHTML = "&times;";
+  closeBtn.setAttribute("aria-label", "Cerrar notificación");
+  closeBtn.className = `
+    text-lg leading-none font-bold ml-2
+    ${isDark ? "text-gray-400 hover:text-white" : "text-gray-500 hover:text-black"}
+    transition-colors duration-200
+  `;
+
+  // Al hacer clic en la X, eliminar con animación
+  closeBtn.addEventListener("click", () => {
+    toast.classList.add("opacity-0", "translate-y-2");
+    setTimeout(() => toast.remove(), 300);
+  });
+
+  toast.appendChild(messageSpan);
+  toast.appendChild(closeBtn);
   container.appendChild(toast);
 
   // Animación de entrada

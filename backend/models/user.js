@@ -8,6 +8,6 @@ const userSchema = new mongoose.Schema({
 });
 
 // Guardar en la colección "user"
-const Usuario = mongoose.model("user", userSchema, "user");
+const User = mongoose.model("User", userSchema, "User");
 
-export default Usuario;
+export default User;
