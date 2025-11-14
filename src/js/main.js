@@ -730,3 +730,100 @@ function writeCartLocal(cart) {
   });
 
 })(); // fin setupCartPageIntegration
+
+// ---------------- Registro de usuario (añadir al final de main.js) ----------------
+(function setupRegisterForm() {
+  // Solo activar si existe el formulario
+  if (document.getElementById('register-form') === null) return;
+
+  const form = document.getElementById('register-form');
+  const submitBtn = document.getElementById('register-submit');
+
+  function disableBtn(disabled = true) {
+    if (!submitBtn) return;
+    submitBtn.disabled = disabled;
+    submitBtn.classList.toggle('opacity-60', disabled);
+    submitBtn.classList.toggle('cursor-not-allowed', disabled);
+  }
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    disableBtn(true);
+
+    // Leer valores
+    const payload = {
+      userId: (document.getElementById('userId')?.value || '').trim(),
+      nombre: (document.getElementById('nombre')?.value || '').trim(),
+      apellido: (document.getElementById('apellido')?.value || '').trim(),
+      telefono: (document.getElementById('telefono')?.value || '').trim(),
+      correo: (document.getElementById('correo')?.value || '').trim(),
+      password: (document.getElementById('password')?.value || ''),
+    };
+
+    // Validación mínima cliente
+    if (!payload.userId || !payload.nombre || !payload.apellido || !payload.correo || !payload.password) {
+      showNotification('Por favor completa todos los campos obligatorios', 'info');
+      disableBtn(false);
+      return;
+    }
+
+    try {
+      const res = await fetch('/api/users/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      const data = await res.json().catch(() => ({}));
+
+      if (!res.ok) {
+        const msg = data?.message || `Error ${res.status} al registrar`;
+        showNotification(msg, 'info');
+        disableBtn(false);
+        return;
+      }
+
+      showNotification('Registro exitoso. Redirigiendo al login...', 'success');
+
+      // pequeño delay para que el usuario vea el toast y luego redirigimos
+      setTimeout(() => {
+        window.location.href = './login.html';
+      }, 900);
+
+    } catch (err) {
+      console.error('Error al registrar usuario:', err);
+      showNotification('Error de conexión. Intenta de nuevo más tarde.', 'info');
+      disableBtn(false);
+    }
+  });
+})();
+
+
+// ---- Control de iconos de usuario (login / avatar) ----
+(function handleUserIcon() {
+  const loginIcon = document.getElementById("user-login-icon");
+  const avatar = document.getElementById("user-avatar");
+
+  if (!loginIcon || !avatar) return;
+
+  // Revisar si hay un usuario guardado
+  const user = JSON.parse(localStorage.getItem("user") || "null");
+
+  if (!user) {
+    // No hay sesión → mostrar icono login
+    loginIcon.style.display = "flex";
+    avatar.style.display = "none";
+    return;
+  }
+
+  // Hay sesión → mostrar avatar con inicial
+  loginIcon.style.display = "none";
+  avatar.style.display = "flex";
+
+  const inicial = user.nombre?.charAt(0)?.toUpperCase() || "?";
+  avatar.textContent = inicial;
+
+  avatar.addEventListener("click", () => {
+    showNotification("Panel de usuario pronto disponible", "info");
+  });
+})();
