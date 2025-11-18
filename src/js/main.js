@@ -540,7 +540,7 @@ function writeCartLocal(cart) {
 }
 
 
-// ---------- LÓGICA y RENDEREO para car.html (moved from car.html) ----------
+// ----------  car.html  ----------
 (function setupCartPageIntegration() {
   // Ejecutar solo si estamos en una página con elementos del carrito (car.html)
   // Buscamos elementos clave para decidir si activamos esta sección
@@ -731,7 +731,7 @@ function writeCartLocal(cart) {
 
 })(); // fin setupCartPageIntegration
 
-// ---------------- Registro de usuario (añadir al final de main.js) ----------------
+// ---------------- Registro de usuario ----------------
 (function setupRegisterForm() {
   // Solo activar si existe el formulario
   if (document.getElementById('register-form') === null) return;
@@ -825,5 +825,156 @@ function writeCartLocal(cart) {
 
   avatar.addEventListener("click", () => {
     showNotification("Panel de usuario pronto disponible", "info");
+  });
+})();
+
+//  ANIMACIÓN MOSTRAR/OCULTAR CONTRASEÑA
+// ------------------------------------------------------
+(function setupPasswordToggle() {
+  const input = document.getElementById("password");
+  const toggle = document.getElementById("toggle-password");
+  const eyeOpen = document.getElementById("eye-icon-open");
+  const eyeClosed = document.getElementById("eye-icon-closed");
+
+  if (!input || !toggle) return;
+
+  toggle.addEventListener("click", () => {
+    const isHidden = input.type === "password";
+
+    // --- Mostrar contraseña ---
+    if (isHidden) {
+      input.type = "text";
+      eyeOpen.classList.add("hidden");
+      eyeClosed.classList.remove("hidden");
+      return;
+    }
+
+    // --- Ocultar contraseña con animación ---
+    const original = input.value;
+    if (!original.length) {
+      input.type = "password";
+      eyeOpen.classList.remove("hidden");
+      eyeClosed.classList.add("hidden");
+      return;
+    }
+
+    let chars = original.split("");
+    let index = 0;
+
+    // Animación: cambia 1 letra → "•" cada 35ms (izq → der)
+    const interval = setInterval(() => {
+      chars[index] = "•";
+
+      input.value = chars.join("");
+
+      index++;
+
+      if (index >= chars.length) {
+        clearInterval(interval);
+
+        setTimeout(() => {
+          input.type = "password";
+          input.value = original; 
+
+          eyeOpen.classList.remove("hidden");
+          eyeClosed.classList.add("hidden");
+        }, 80);
+      }
+    }, 35); // velocidad de animación
+  });
+})();
+
+// =============================
+//  LOGIN.JS INTEGRADO EN MAIN
+// =============================
+(function setupLoginForm() {
+  const form = document.getElementById("login-form");
+  if (!form) return;
+
+  console.log("📌 Sistema de login cargado");
+
+  const API_URL = "http://localhost:8081/api/login"; // confirma que esta ruta es la correcta en tu backend
+  const btn = document.getElementById("login-btn");
+  const errorDiv = document.getElementById("login-error");
+  const errorMsg = document.getElementById("login-error-message");
+
+  // helper: mostrar mensaje (info o success)
+  function showMessage(text, type = "error") {
+    if (!errorDiv || !errorMsg) return;
+    errorMsg.textContent = text;
+    errorDiv.classList.remove("hidden");
+    if (type === "success") {
+      errorDiv.className = "mx-auto max-w-md mb-4 rounded-lg px-4 py-2 text-sm bg-green-100 border border-green-300 text-green-700";
+    } else {
+      errorDiv.className = "mx-auto max-w-md mb-4 rounded-lg px-4 py-2 text-sm bg-red-100 border border-red-300 text-red-700";
+    }
+  }
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    if (errorDiv) errorDiv.classList.add("hidden");
+
+    const datos = {
+      correo: document.getElementById("email")?.value.trim() || "",
+      password: document.getElementById("password")?.value || ""
+    };
+
+    if (!datos.correo || !datos.password) {
+      showMessage("Por favor completa todos los campos.", "error");
+      return;
+    }
+
+    if (btn) {
+      btn.disabled = true;
+      btn.textContent = "Iniciando sesión...";
+    }
+
+    try {
+      const response = await fetch(API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(datos)
+      });
+
+      const resultado = await response.json().catch(() => ({}));
+
+      if (response.ok) {
+        const usuario = resultado.usuario || resultado.user || resultado.data || resultado;
+        const id = usuario?.id || usuario?._id || resultado?.id || null;
+
+        if (!usuario || !id) {
+          showMessage("Inicio de sesión correcto, pero la respuesta del servidor no incluye datos de usuario.", "error");
+          console.warn("Respuesta inesperada del backend:", resultado);
+          if (btn) { btn.disabled = false; btn.textContent = "Iniciar Sesión"; }
+          return;
+        }
+
+        // Guardar sesión (clave 'user' — coincidente con handleUserIcon)
+        localStorage.setItem("sesionActiva", "true");
+        localStorage.setItem("user", JSON.stringify({
+          id: id,
+          nombre: usuario.nombre || usuario.firstName || "",
+          apellido: usuario.apellido || usuario.lastName || "",
+          telefono: usuario.telefono || usuario.phone || "",
+          correo: usuario.correo || usuario.email || ""
+        }));
+
+        showMessage("Inicio de sesión correcto. Redirigiendo...", "success");
+
+        setTimeout(() => {
+          window.location.href = "productos.html";
+        }, 700);
+
+      } else {
+        const msg = resultado?.message || resultado?.error || `Credenciales incorrectas (status ${response.status})`;
+        showMessage(msg, "error");
+      }
+
+    } catch (error) {
+      console.error("❌ Error de conexión:", error);
+      showMessage("No se pudo conectar al servidor.", "error");
+    } finally {
+      if (btn) { btn.disabled = false; btn.textContent = "Iniciar Sesión"; }
+    }
   });
 })();

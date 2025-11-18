@@ -42,7 +42,7 @@
           </a>
         </div>
   
-        <!-- ICONOS DERECHA (FIJOS, ESQUINA SUPERIOR DERECHA) -->
+        <!-- ICONOS DERECHA -->
         <div class="flex items-center space-x-3 fixed top-4 right-4 z-50">
         
           <!-- BOTÓN TEMA -->
@@ -70,7 +70,7 @@
               style="display:none;">0</span>
           </a>
         
-          <!-- ICONO USUARIO (si NO hay sesión) -->
+          <!-- ICONO USUARIO -->
           <a id="user-login-icon" href="./login.html"
             class="p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition flex items-center justify-center">
             <svg class="w-6 h-6 text-gray-700 dark:text-gray-200" fill="none" stroke="currentColor" stroke-width="2">
@@ -79,7 +79,7 @@
             </svg>
           </a>
         
-          <!-- AVATAR (si hay sesión) -->
+          <!-- AVATAR -->
           <div id="user-avatar"
             class="hidden w-9 h-9 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-full flex items-center justify-center font-bold cursor-pointer">
           </div>
@@ -132,9 +132,33 @@
 
         <div>
           <label for="password" class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Contraseña</label>
-          <input id="password" name="password" type="password" minlength="6" required class="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100" placeholder="••••••••" />
+        
+          <!-- contenedor relativo (ojito + animación) -->
+          <div class="relative">
+            <input id="password" name="password" type="password" minlength="6" required
+              class="w-full px-3 py-2 pr-12 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 transition-all duration-200"
+              placeholder="••••••••" autocomplete="new-password" />
+        
+            <button type="button" id="toggle-password"
+              class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+              aria-label="Mostrar u ocultar contraseña" title="Mostrar u ocultar contraseña">
+              <!-- ojo abierto -->
+              <svg id="eye-icon-open" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+              </svg>
+        
+              <!-- ojo tachado (oculto) -->
+              <svg id="eye-icon-closed" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M3 3l3.59 3.59M9.878 9.878l4.242 4.242M21 21l-3.59-3.59" />
+              </svg>
+            </button>
+          </div>
         </div>
-
         <div class="flex items-center justify-between">
           <label class="flex items-center cursor-pointer text-sm text-gray-700 dark:text-gray-200">
             <input type="checkbox" id="terms" class="w-4 h-4 text-blue-600 border-gray-300 rounded mr-2" />
@@ -155,7 +179,7 @@
     </div>
   </main>
 
-  <!-- FOOTER (igual al index) -->
+  <!-- FOOTER -->
   <footer id="contacto" class="bg-gray-900 dark:bg-gray-950 text-white py-12 transition-colors duration-500 mt-12">
     <div class="max-w-7xl mx-auto px-4">
       <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
@@ -203,10 +227,8 @@
     </div>
   </footer>
 
-  <!-- Contenedor para toasts (ya lo tienes en index/main.js pero por si acaso se carga independientes) -->
   <div id="toast-container" class="fixed top-4 right-4 space-y-3 z-[9999]" aria-live="polite"></div>
 
-  <!-- main.js controla tema, notificaciones y la lógica general -->
   <script src="../js/main.js" defer></script>
 </body>
 </html>

@@ -1,0 +1,2 @@
+{"rule":"MORFOLOGIK_RULE_ES","sentence":"^\\QTechStore Pro\\E$"}
+{"rule":"MORFOLOGIK_RULE_ES","sentence":"^\\Q&copy; 2025 TechStore Pro.\\E$"}
