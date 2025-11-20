@@ -103,6 +103,26 @@ if (heroSection) {
   }
 })();
 
+// --- Newsletter → Redirigir a registro con email guardado ---
+(function setupNewsletterRedirect() {
+  const btn = document.getElementById("newsletter-btn");
+  const emailInput = document.getElementById("newsletter-email");
+
+  if (!btn || !emailInput) return;
+
+  btn.addEventListener("click", () => {
+    const email = emailInput.value.trim();
+
+    // Si escribió un correo, guardarlo temporalmente
+    if (email.length > 5 && email.includes("@")) {
+      localStorage.setItem("preRegisterEmail", email);
+    }
+
+    // Redirigir al formulario de registro
+    window.location.href = "./register.html";
+  });
+})();
+
 // === Cargar productos desde la API del backend (versión robusta) ===
 async function fetchProductsFromAPI() {
   try {
@@ -798,35 +818,79 @@ function writeCartLocal(cart) {
   });
 })();
 
+// --- Autocompletar email en la página register.html ---
+(function autofillRegisterEmail() {
+  if (!window.location.pathname.includes("register.html")) return;
 
-// ---- Control de iconos de usuario (login / avatar) ----
+  const input = document.getElementById("register-email");
+  if (!input) return;
+
+  const savedEmail = localStorage.getItem("preRegisterEmail");
+  if (savedEmail) {
+    input.value = savedEmail;
+  }
+
+  // Opcional: eliminar después de usarlo
+  localStorage.removeItem("preRegisterEmail");
+})();
+
+
+// ---- Control de iconos de usuario (login / avatar + menú) ----
 (function handleUserIcon() {
   const loginIcon = document.getElementById("user-login-icon");
   const avatar = document.getElementById("user-avatar");
+  const userMenu = document.getElementById("user-menu");
+  const btnPerfil = document.getElementById("btn-ver-perfil");
+  const btnLogout = document.getElementById("btn-cerrar-sesion");
 
   if (!loginIcon || !avatar) return;
 
-  // Revisar si hay un usuario guardado
+  // Revisar si hay usuario guardado
   const user = JSON.parse(localStorage.getItem("user") || "null");
 
+  // ---- NO HAY SESIÓN ----
   if (!user) {
-    // No hay sesión → mostrar icono login
     loginIcon.style.display = "flex";
     avatar.style.display = "none";
+    if (userMenu) userMenu.classList.add("hidden");
     return;
   }
 
-  // Hay sesión → mostrar avatar con inicial
+  // ---- HAY SESIÓN ----
   loginIcon.style.display = "none";
   avatar.style.display = "flex";
 
   const inicial = user.nombre?.charAt(0)?.toUpperCase() || "?";
   avatar.textContent = inicial;
 
+  // Toggle del menú
   avatar.addEventListener("click", () => {
-    showNotification("Panel de usuario pronto disponible", "info");
+    userMenu.classList.toggle("hidden");
   });
+
+  // Cierra menú al hacer click fuera
+  document.addEventListener("click", (e) => {
+    if (!avatar.contains(e.target) && !userMenu.contains(e.target)) {
+      userMenu.classList.add("hidden");
+    }
+  });
+
+  // Ver perfil
+  if (btnPerfil) {
+    btnPerfil.addEventListener("click", () => {
+      window.location.href = "./perfil.html";
+    });
+  }
+
+  // Cerrar sesión
+  if (btnLogout) {
+    btnLogout.addEventListener("click", () => {
+      localStorage.removeItem("user");
+      location.reload();
+    });
+  }
 })();
+
 
 //  ANIMACIÓN MOSTRAR/OCULTAR CONTRASEÑA
 // ------------------------------------------------------
@@ -977,4 +1041,253 @@ function writeCartLocal(cart) {
       if (btn) { btn.disabled = false; btn.textContent = "Iniciar Sesión"; }
     }
   });
+})();
+
+
+// ===============================================
+//        CONTROL DINÁMICO DE PERFIL 
+// ===============================================
+(function setupProfilePage() {
+  // Detectar si estamos en perfil.html
+  if (!window.location.pathname.includes("perfil.html")) return;
+
+  const user = JSON.parse(localStorage.getItem("user") || "null");
+
+  // Si no hay sesión → redirigir
+  if (!user) {
+    window.location.href = "./login.html";
+    return;
+  }
+
+  // ----------- Rellenar datos si existen los elementos -----------
+  const setText = (id, value) => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = value;
+  };
+
+  setText("perfil-nombre", user.nombre || "Usuario");
+  setText("perfil-correo", user.email || "correo@ejemplo.com");
+  setText("perfil-fecha", user.fechaRegistro || "2025");
+  setText("perfil-ultimo-login", user.ultimoLogin || "Hace poco");
+
+  // ----------- Avatar dinámico -----------
+  const avatar = document.getElementById("perfil-avatar");
+  if (avatar) {
+    avatar.textContent = user.nombre?.charAt(0)?.toUpperCase() || "?";
+  }
+})();
+
+// ---- Ajuste de anclas para header fijo (si el hash posiciona muy abajo) ----
+(function fixAnchorOffset() {
+  // solo si existe hash en la URL
+  if (!window.location.hash) return;
+
+  function scrollToHashAdjusted() {
+    const hash = window.location.hash;
+    const target = document.querySelector(hash);
+    const header = document.querySelector('header');
+    if (!target) return;
+    const headerHeight = header ? header.offsetHeight : 0;
+    const y = target.getBoundingClientRect().top + window.scrollY - headerHeight - 12; // 12px breathing room
+    window.scrollTo({ top: y, behavior: 'smooth' });
+  }
+
+  // Esperar a que el DOM y estilos estén listos
+  window.addEventListener('load', () => {
+    // pequeño delay para asegurar imágenes y CSS
+    setTimeout(scrollToHashAdjusted, 50);
+  });
+
+  // también interceptar clicks en enlaces internos para aplicar offset
+  document.addEventListener('click', (e) => {
+    const a = e.target.closest('a[href^="#"]');
+    if (!a) return;
+    const href = a.getAttribute('href');
+    const target = document.querySelector(href);
+    if (!target) return;
+    e.preventDefault();
+    const header = document.querySelector('header');
+    const headerHeight = header ? header.offsetHeight : 0;
+    const y = target.getBoundingClientRect().top + window.scrollY - headerHeight - 12;
+    window.history.pushState(null, '', href); // actualizar hash
+    window.scrollTo({ top: y, behavior: 'smooth' });
+  });
+})();
+
+
+// ======================
+// Checkout page handler
+// ======================
+(function setupCheckoutPage() {
+  if (!window.location.pathname.includes("checkout.html")) return;
+
+  const form = document.getElementById("checkout-form");
+  const itemsContainer = document.getElementById("checkout-items");
+  const subtotalEl = document.getElementById("checkout-subtotal");
+  const shippingEl = document.getElementById("checkout-shipping");
+  const totalEl = document.getElementById("checkout-total");
+  const btnPay = document.getElementById("btn-pay");
+  const btnCancel = document.getElementById("btn-cancel");
+  const cardFields = document.getElementById("card-fields");
+
+  // lee carrito usando tus helpers
+  const cart = readCartLocal() || [];
+  if (!itemsContainer || !subtotalEl || !totalEl) return;
+
+  // mostrar items en resumen
+  function renderCheckoutItems() {
+    itemsContainer.innerHTML = "";
+    if (!cart.length) {
+      itemsContainer.innerHTML = '<div class="text-sm text-gray-500 dark:text-gray-400">No hay productos en el carrito.</div>';
+      subtotalEl.textContent = "$0";
+      totalEl.textContent = "$0";
+      return;
+    }
+
+    let subtotal = 0;
+    cart.forEach(it => {
+      const lineTotal = (Number(it.price || 0) * Number(it.qty || 1));
+      subtotal += lineTotal;
+
+      const row = document.createElement("div");
+      row.className = "flex items-center justify-between p-3 rounded-lg bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800";
+      row.innerHTML = `
+        <div class="flex items-center gap-3">
+          <img src="${it.image || '../images/placeholder.png'}" class="w-12 h-12 object-cover rounded-md" alt="${(it.title||'Producto')}">
+          <div>
+            <div class="font-medium text-gray-800 dark:text-gray-100">${(it.title||'Producto')}</div>
+            <div class="text-xs text-gray-500 dark:text-gray-400">x${it.qty || 1}</div>
+          </div>
+        </div>
+        <div class="text-right">
+          <div class="font-semibold text-gray-800 dark:text-gray-100">${formatPrice(lineTotal)}</div>
+        </div>
+      `;
+      itemsContainer.appendChild(row);
+    });
+
+    // shipping (puedes modificar lógica según reglas)
+    const shipping = 0;
+    subtotalEl.textContent = formatPrice(subtotal);
+    shippingEl.textContent = shipping === 0 ? "Gratis" : formatPrice(shipping);
+    totalEl.textContent = formatPrice(subtotal + shipping);
+  }
+
+  renderCheckoutItems();
+
+  // Mostrar/ocultar campos de tarjeta según método seleccionado
+  function updatePaymentFields() {
+    const method = form.querySelector('input[name="payment-method"]:checked')?.value;
+    if (!cardFields) return;
+    if (method === "card") {
+      cardFields.style.display = "";
+    } else {
+      cardFields.style.display = "none";
+    }
+  }
+  // init
+  updatePaymentFields();
+  form.addEventListener("change", (e) => {
+    if (e.target.name === "payment-method") updatePaymentFields();
+  });
+
+  // Cancelar vuelve al carrito
+  btnCancel?.addEventListener("click", () => {
+    window.location.href = "./car.html";
+  });
+
+  // Evento pagar (simulado)
+  btnPay?.addEventListener("click", async (ev) => {
+    ev.preventDefault();
+
+    // Valida campos mínimos
+    const name = document.getElementById("billing-name")?.value.trim();
+    const phone = document.getElementById("billing-phone")?.value.trim();
+    const address = document.getElementById("billing-address")?.value.trim();
+    const method = form.querySelector('input[name="payment-method"]:checked')?.value || "card";
+
+    if (!name || !phone || !address) {
+      showNotification("Por favor completa nombre, teléfono y dirección.", "info");
+      return;
+    }
+
+    if (!cart.length) {
+      showNotification("Tu carrito está vacío.", "info");
+      return;
+    }
+
+    // Construir payload
+    const products = cart.map(it => ({
+      id: it.id,
+      title: it.title,
+      qty: it.qty || 1,
+      price: Number(it.price || 0)
+    }));
+
+    const subtotal = products.reduce((s,p) => s + (p.price * p.qty), 0);
+    const envio = 0;
+    const total = subtotal + envio;
+
+    const usuario = JSON.parse(localStorage.getItem("user") || "null");
+    const payload = {
+      usuarioId: usuario?.id || null,
+      usuarioData: usuario || null,
+      billing: { name, phone, address },
+      payment: {
+        method,
+        card: {
+          number: document.getElementById("card-number")?.value.replace(/\s+/g,"") || null,
+          exp: document.getElementById("card-exp")?.value || null,
+          cvc: document.getElementById("card-cvc")?.value || null,
+          holder: document.getElementById("card-name")?.value || name
+        }
+      },
+      products,
+      subtotal,
+      envio,
+      total,
+      meta: { from: window.location.pathname, ts: Date.now() }
+    };
+
+    // Interfaz: bloquear botón mientras procesa
+    btnPay.disabled = true;
+    btnPay.classList.add("opacity-60", "cursor-not-allowed");
+    btnPay.textContent = "Procesando...";
+
+    try {
+      // LLamada al backend (ruta de ejemplo). Cambia la URL por la de tu servidor.
+      const res = await fetch("/api/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+
+      const data = await res.json().catch(() => ({}));
+
+      if (res.ok) {
+        // Respuesta simulada exitosa
+        showNotification("Pago procesado correctamente. Gracias por tu compra.", "success");
+
+        // Opcional: limpiar carrito
+        writeCartLocal([]);
+
+        // Redirigir a página de confirmación (puedes crear confirm.html)
+        setTimeout(() => {
+          window.location.href = "./confirmacion.html?order=" + encodeURIComponent(data.orderId || "simulated-" + Date.now());
+        }, 900);
+      } else {
+        const msg = data?.message || `Error procesando pago (${res.status})`;
+        showNotification(msg, "info");
+      }
+
+    } catch (err) {
+      console.error("Error al comunicarse con el backend:", err);
+      showNotification("No se pudo conectar con el servidor de pagos.", "info");
+    } finally {
+      btnPay.disabled = false;
+      btnPay.classList.remove("opacity-60", "cursor-not-allowed");
+      btnPay.textContent = "Pagar ahora";
+    }
+  });
+
 })();

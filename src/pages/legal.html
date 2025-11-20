@@ -1,61 +1,14 @@
-<!-- productos.html -->
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" class="scroll-smooth">
+
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>TechStore Pro — Productos</title>
-  <link rel="stylesheet" href="../output.css" />
-  <style>
-/*Cambia valor Ejemplo: :root { --card-img-h: 22rem; }*/
-    :root {
-      --card-img-h: 22rem;
-    }
-    #productos-grid > .product-card {
-      display: flex;
-      flex-direction: column;
-      height: 100%;
-    }
-
-    /*Aunque tu JS imprima `h-48` la altura real viene de la variable --card-img-h */
-    .product-card .h-48,
-    .product-card .h-56,
-    .product-card .h-64,
-    .product-card .h-72,
-    .product-card .h-80 {
-      height: var(--card-img-h) !important;
-    }
-
-    /* Si tu JS genera un contenedor sin clase h-XX, apuntamos al primer hijo (imagen) por si acaso */
-    .product-card > div:first-child {
-      height: var(--card-img-h);
-    }
-
-    /* Asegurar que la parte de contenido empuje hacia abajo (consistencia de altura) */
-    .product-card .card-content {
-      display: flex;
-      flex-direction: column;
-      flex: 1 1 auto;
-    }
-    .product-card .card-footer {
-      margin-top: auto;
-    }
-
-    /* Pequeña mejora para evitar que img sobresalga si la caja es mayor */
-    .product-card img {
-      display: block;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-
-    /* Para pantallas muy pequeñas puedes querer una altura menor por defecto: */
-    @media (max-width: 640px) {
-      :root { --card-img-h: 10rem; }
-    }
-  </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Legal | TechStore Pro</title>
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-gray-100 font-sans transition-colors duration-300">
+
+<body class="bg-gray-100 text-gray-900 dark:bg-gray-900 dark:text-gray-100 transition-colors duration-500">
 
   <!-- HEADER -->
   <header class="bg-white/80 dark:bg-gray-900/80 shadow-lg sticky top-0 z-50 transition-colors duration-500 backdrop-blur">
@@ -155,67 +108,64 @@
     </nav>
   </header>
 
-  <!-- MAIN -->
-  <main class="max-w-7xl mx-auto px-4 py-10">
+  <main class="container mx-auto px-6 py-12">
 
-    <!-- BUSCADOR Y FILTROS -->
-    <section class="bg-white dark:bg-gray-900 rounded-xl shadow-lg p-6 mb-8 transition-colors duration-300">
-      <div class="mb-6">
-        <div class="relative">
-          <input id="search-input" type="text" placeholder="Buscar productos..."
-            class="w-full pl-12 pr-4 py-3 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200"/>
-          <svg class="absolute left-4 top-3.5 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" aria-hidden="true">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M11 19a8 8 0 100-16 8 8 0 000 16z"></path>
-          </svg>
-        </div>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div>
-          <label for="category-filter" class="block text-sm font-medium text-gray-700 mb-2">Categoría</label>
-          <select id="category-filter"
-            class="w-full p-3 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200"> 
-            <option value="all">Todas las categorías</option>
-            <option value="laptops">Laptops</option>
-            <option value="celulares">Celulares</option>
-            <option value="componentes">Componentes PC</option>
-            <option value="accesorios">Accesorios</option>
-          </select>
-        </div>
-
-        <div>
-          <label for="price-filter" class="block text-sm font-medium text-gray-700 mb-2">Rango de Precio</label>
-          <select id="price-filter"
-            class="w-full p-3 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200">
-            <option value="all">Todos</option>
-            <option value="0-500000">$0 - $500.000</option>
-            <option value="500000-1500000">$500.000 - $1.500.000</option>
-            <option value="1500000-5000000">$1.500.000 - $5.000.000</option>
-          </select>
-        </div>
-
-        <div>
-          <label for="sort-filter" class="block text-sm font-medium text-gray-700 mb-2">Ordenar por</label>
-          <select id="sort-filter"
-            class="w-full p-3 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200">
-            <option value="relevance">Relevancia</option>
-            <option value="price-asc">Precio: Menor a Mayor</option>
-            <option value="price-desc">Precio: Mayor a Menor</option>
-            <option value="name-asc">Nombre A-Z</option>
-            <option value="newest">Más Nuevos</option>
-          </select>
-        </div>
-      </div>
+    <!-- HERO -->
+    <section class="text-center mb-16">
+      <h2 class="text-4xl font-extrabold mb-4">Información Legal</h2>
+      <p class="text-lg text-gray-600 dark:text-gray-300">Consulta los apartados relevantes sobre el uso de TechStore Pro.</p>
     </section>
 
-    <section id="productos-section" class="mb-12">
-      <div id="productos-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 items-stretch auto-rows-fr">
-      </div>
+    <!-- TÉRMINOS -->
+    <section id="terminos" class="mb-20 bg-white dark:bg-gray-800 shadow-lg rounded-2xl p-8">
+      <h3 class="text-3xl font-bold mb-4 text-blue-600 dark:text-blue-400">Términos y Descargo de Responsabilidad</h3>
+      <p class="leading-relaxed text-gray-700 dark:text-gray-300">
+        El contenido de TechStore Pro se proporciona únicamente con fines informativos y comerciales. Aunque procuramos
+        que toda la información sea precisa y actualizada, no garantizamos la exactitud total de los datos presentados.
+        <br><br>
+        TechStore Pro no será responsable por daños derivados del uso de los productos, recomendaciones o información
+        publicada en el sitio. El usuario acepta utilizar este sitio bajo su propio riesgo y responsabilidad.
+      </p>
+    </section>
 
-      <!-- PAGINACIÓN -->
-      <div class="mt-12 flex justify-center">
-        <nav id="pagination" class="flex space-x-2" aria-label="Paginación"></nav>
-      </div>
+    <!-- PRIVACIDAD -->
+    <section id="privacidad" class="mb-20 bg-white dark:bg-gray-800 shadow-lg rounded-2xl p-8">
+      <h3 class="text-3xl font-bold mb-4 text-purple-600 dark:text-purple-400">Política de Privacidad</h3>
+      <p class="leading-relaxed text-gray-700 dark:text-gray-300">
+        Esta Política de Privacidad describe cómo recopilamos, usamos y protegemos la información personal proporcionada
+        por los usuarios de TechStore Pro.
+        <br><br>
+        <strong>1. Información Recopilada:</strong> Podemos recopilar datos como nombre, correo electrónico y
+        preferencias de navegación cuando el usuario interactúa con el sitio.
+        <br><br>
+        <strong>2. Uso de la Información:</strong> Utilizamos los datos para mejorar la experiencia del usuario, ofrecer
+        contenido personalizado y enviar novedades si el usuario así lo autoriza.
+        <br><br>
+        <strong>3. Protección de Datos:</strong> Implementamos medidas técnicas y organizativas para mantener la
+        seguridad de la información personal.
+        <br><br>
+        <strong>4. Derechos del Usuario:</strong> El usuario puede solicitar la eliminación, corrección o acceso a sus
+        datos personales contactándonos mediante los canales oficiales.
+      </p>
+    </section>
+
+    <!-- COOKIES -->
+    <section id="cookies" class="mb-20 bg-white dark:bg-gray-800 shadow-lg rounded-2xl p-8">
+      <h3 class="text-3xl font-bold mb-4 text-pink-600 dark:text-pink-400">Política de Cookies</h3>
+      <p class="leading-relaxed text-gray-700 dark:text-gray-300">
+        TechStore Pro utiliza cookies para mejorar el rendimiento del sitio, personalizar la experiencia del usuario y
+        analizar el tráfico.
+        <br><br>
+        <strong>¿Qué son las cookies?</strong> Son pequeños archivos almacenados en tu dispositivo que permiten recordar
+        acciones o preferencias.
+        <br><br>
+        <strong>Tipos de cookies que utilizamos:</strong><br>
+        • Cookies esenciales para el funcionamiento del sitio.<br>
+        • Cookies analíticas para entender el comportamiento de los usuarios.<br>
+        • Cookies de personalización para mejorar la experiencia según tus preferencias.<br><br>
+        Puedes desactivar las cookies desde la configuración de tu navegador, pero algunas funciones del sitio podrían
+        dejar de estar disponibles.
+      </p>
     </section>
 
   </main>
@@ -266,6 +216,8 @@
       </div>
     </div>
   </footer>
-  <script src="../js/main.js" defer></script>
+
+  <script src="../js/main.js"></script>
 </body>
+
 </html>
