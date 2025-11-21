@@ -1,4 +1,3 @@
-<!-- productos.html -->
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -7,7 +6,7 @@
   <title>TechStore Pro — Productos</title>
   <link rel="stylesheet" href="../output.css" />
   <style>
-/*Cambia valor Ejemplo: :root { --card-img-h: 22rem; }*/
+/*Cambiar valor :root { --card-img-h: 22rem; }*/
     :root {
       --card-img-h: 22rem;
     }
@@ -17,7 +16,7 @@
       height: 100%;
     }
 
-    /*Aunque tu JS imprima `h-48` la altura real viene de la variable --card-img-h */
+    /*altura real viene de la variable --card-img-h*/
     .product-card .h-48,
     .product-card .h-56,
     .product-card .h-64,
@@ -26,12 +25,12 @@
       height: var(--card-img-h) !important;
     }
 
-    /* Si tu JS genera un contenedor sin clase h-XX, apuntamos al primer hijo (imagen) por si acaso */
+    /* Apuntamos al primer hijo (imagen) por si acaso */
     .product-card > div:first-child {
       height: var(--card-img-h);
     }
 
-    /* Asegurar que la parte de contenido empuje hacia abajo (consistencia de altura) */
+    /* (consistencia de altura) */
     .product-card .card-content {
       display: flex;
       flex-direction: column;
@@ -49,7 +48,7 @@
       object-fit: cover;
     }
 
-    /* Para pantallas muy pequeñas puedes querer una altura menor por defecto: */
+    /* Para pantallas muy pequeñas altura menor por defecto: */
     @media (max-width: 640px) {
       :root { --card-img-h: 10rem; }
     }
