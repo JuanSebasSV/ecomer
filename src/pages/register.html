@@ -122,23 +122,19 @@
       <form id="register-form" class="grid grid-cols-1 gap-4">
         <div class="grid grid-cols-2 gap-4">
           <div>
-            <label for="userId" class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">User ID</label>
-            <input id="userId" name="userId" required class="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100" placeholder="ej: usuario123" />
-          </div>
-          <div>
-            <label for="telefono" class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Teléfono</label>
-            <input id="telefono" name="telefono" required class="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100" placeholder="+57 300 0000000" />
-          </div>
-        </div>
-
-        <div class="grid grid-cols-2 gap-4">
-          <div>
             <label for="nombre" class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Nombre</label>
             <input id="nombre" name="nombre" required class="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100" placeholder="Sebastián" />
           </div>
           <div>
             <label for="apellido" class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Apellido</label>
             <input id="apellido" name="apellido" required class="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100" placeholder="Suárez" />
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label for="telefono" class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">Teléfono</label>
+            <input id="telefono" name="telefono" required class="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100" placeholder="+57 300 0000000" />
           </div>
         </div>
 
@@ -246,5 +242,7 @@
   <div id="toast-container" class="fixed top-4 right-4 space-y-3 z-[9999]" aria-live="polite"></div>
 
   <script src="../js/main.js" defer></script>
+  <script src="../js/register.js" defer></script>
+  <script src="../js/notifications.js" defer></script>
 </body>
 </html>
