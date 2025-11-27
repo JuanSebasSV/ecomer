@@ -1,3 +1,12 @@
+// --- FORZAR RECARGA DE CSS PARA SALTAR CACHÉ ---
+(function fixCssCache() {
+  document.querySelectorAll('link[rel="stylesheet"]').forEach(link => {
+    const url = link.getAttribute("href");
+    const sep = url.includes("?") ? "&" : "?";
+    link.setAttribute("href", `${url}${sep}v=${Date.now()}`);
+  });
+})();
+
 // === MODO OSCURO (versión robusta: init inmediato si es necesario) ===
 (function () {
   function initThemeToggle() {
@@ -215,37 +224,6 @@ function writeCartLocal(cart) {
       }
     }, 35); // velocidad de animación
   });
-})();
-
-//        CONTROL DINÁMICO DE PERFIL 
-(function setupProfilePage() {
-  // Detectar si estamos en perfil.html
-  if (!window.location.pathname.includes("perfil.html")) return;
-
-  const user = JSON.parse(localStorage.getItem("user") || "null");
-
-  // Si no hay sesión → redirigir
-  if (!user) {
-    window.location.href = "./login.html";
-    return;
-  }
-
-  // ----------- Rellenar datos si existen los elementos -----------
-  const setText = (id, value) => {
-    const el = document.getElementById(id);
-    if (el) el.textContent = value;
-  };
-
-  setText("perfil-nombre", user.nombre || "Usuario");
-  setText("perfil-correo", user.email || "correo@ejemplo.com");
-  setText("perfil-fecha", user.fechaRegistro || "2025");
-  setText("perfil-ultimo-login", user.ultimoLogin || "Hace poco");
-
-  // ----------- Avatar dinámico -----------
-  const avatar = document.getElementById("perfil-avatar");
-  if (avatar) {
-    avatar.textContent = user.nombre?.charAt(0)?.toUpperCase() || "?";
-  }
 })();
 
 // ---- Ajuste de anclas para header fijo (si el hash posiciona muy abajo) ----

@@ -42,3 +42,35 @@ if (heroSection) {
     window.location.href = "./register.html";
   });
 })();
+
+// REDIRECCIÓN POR CATEGORÍAS
+document.addEventListener('DOMContentLoaded', () => {
+  // Si hay recuadros de categorías (index.html)
+  const categoryCards = document.querySelectorAll('[data-category]');
+  if (categoryCards.length > 0) {
+    categoryCards.forEach(card => {
+      card.addEventListener('click', () => {
+        const category = card.getAttribute('data-category');
+        // Redirige a productos.html con el filtro aplicado
+        window.location.href = `./productos.html?category=${category}`;
+      });
+    });
+  }
+
+  // Si estamos en productos.html, leer la categoría de la URL
+  const params = new URLSearchParams(window.location.search);
+  const urlCategory = params.get('category');
+  const categorySelect = document.getElementById('category-filter');
+
+  if (urlCategory && categorySelect) {
+    // Validar categorías existentes
+    const validCategories = ['laptops', 'celulares', 'componentes', 'accesorios'];
+    if (validCategories.includes(urlCategory)) {
+      // Aplicar filtro automático
+      state.category = urlCategory;
+      categorySelect.value = urlCategory;
+      if (grid) render();
+    }
+  }
+});
+
