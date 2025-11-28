@@ -1,9 +1,21 @@
+import dotenv from 'dotenv';
+dotenv.config();
+
+// 🔍 AGREGA ESTAS LÍNEAS JUSTO DESPUÉS
+console.log('=== VERIFICANDO VARIABLES DE ENTORNO ===');
+console.log('EMAIL_USER:', process.env.EMAIL_USER);
+console.log('EMAIL_PASSWORD:', process.env.EMAIL_PASSWORD);
+console.log('NODE_ENV:', process.env.NODE_ENV);
+console.log('=========================================');
+
 import express from "express";
 import cors from "cors";
-import "./db/db.js"; // conexión a MongoDB
+import "./db/db.js";
 import productosRouter from "./routes/productos.routes.js";
 import usersRouter from "./routes/user.routes.js";
 import loginRouter from "./routes/login.routes.js";
+
+// ... resto del código
 
 const app = express();
 

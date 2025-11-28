@@ -6,7 +6,10 @@ import {
   obtenerUsuario, 
   actualizarUsuario,
   cambiarPassword,
-  recuperarPassword  // <-- AGREGAR ESTA IMPORTACIÓN
+  recuperarPassword,
+  verificarCodigo,      // ✅ NUEVA
+  verificarToken,
+  restablecerPassword
 } from "../controllers/user.controller.js";
 
 const router = express.Router();
@@ -17,8 +20,11 @@ router.get("/", listarUsuarios);
 router.get("/:id", obtenerUsuario);
 router.patch("/:id", actualizarUsuario);
 
-// NUEVAS RUTAS
+// Rutas de contraseña
 router.post("/:id/change-password", cambiarPassword);
 router.post("/recover-password", recuperarPassword);
+router.post("/verify-code", verificarCodigo);        // ✅ NUEVA RUTA
+router.get("/verify-token/:token", verificarToken);
+router.post("/reset-password", restablecerPassword);
 
 export default router;

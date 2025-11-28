@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TechStore Pro - Restablecer Contraseña</title>
+  <link rel="stylesheet" href="../output.css">
+</head>
+
+<body class="bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-gray-100 font-sans transition-colors duration-500">
+
+  <!-- HEADER -->
+  <header class="bg-white/80 dark:bg-gray-900/80 shadow-lg sticky top-0 z-50 transition-colors duration-500 backdrop-blur">
+    <nav class="relative max-w-7xl mx-auto px-4 py-4">
+      <div class="flex items-center justify-center">
+        <div class="flex items-center">
+          <div class="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-3 py-2 rounded-lg mr-3">
+            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z" />
+            </svg>
+          </div>
+          <h1 class="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+            <a href="./index.html">TechStore Pro</a>
+          </h1>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <!-- MAIN -->
+  <main class="flex items-center justify-center px-4 py-16 min-h-[calc(100vh-200px)]">
+
+    <!-- VERIFICANDO TOKEN (estado inicial) -->
+    <div id="loading-state" class="w-full max-w-md bg-white dark:bg-gray-900 rounded-2xl shadow-2xl p-8 border border-gray-200 dark:border-gray-700">
+      <div class="text-center">
+        <svg class="animate-spin w-12 h-12 mx-auto text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+        <p class="mt-4 text-gray-600 dark:text-gray-400">Verificando token...</p>
+      </div>
+    </div>
+
+    <!-- TOKEN INVÁLIDO -->
+    <div id="invalid-token" class="hidden w-full max-w-md bg-white dark:bg-gray-900 rounded-2xl shadow-2xl p-8 border border-gray-200 dark:border-gray-700">
+      <div class="text-center">
+        <div class="w-16 h-16 mx-auto flex items-center justify-center bg-red-100 dark:bg-red-900/30 rounded-full mb-4">
+          <svg class="w-8 h-8 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </div>
+        <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">Token Inválido o Expirado</h2>
+        <p class="text-gray-600 dark:text-gray-400 mb-6">
+          El enlace de recuperación no es válido o ya ha expirado. Por favor, solicita uno nuevo.
+        </p>
+        <a href="./recover.html" 
+          class="inline-block py-3 px-6 rounded-lg bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold hover:opacity-90 transition">
+          Solicitar Nuevo Enlace
+        </a>
+      </div>
+    </div>
+
+    <!-- FORMULARIO DE RESET -->
+    <div id="reset-form-container" class="hidden w-full max-w-md bg-white dark:bg-gray-900 rounded-2xl shadow-2xl p-8 border border-gray-200 dark:border-gray-700">
+      
+      <div class="text-center mb-6">
+        <div class="w-16 h-16 mx-auto flex items-center justify-center bg-gradient-to-r from-blue-600 to-purple-600 rounded-full mb-4">
+          <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
+          </svg>
+        </div>
+        <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100">Nueva Contraseña</h2>
+        <p id="user-email" class="text-sm text-gray-600 dark:text-gray-400 mt-2"></p>
+      </div>
+
+      <form id="reset-password-form" class="space-y-5">
+        
+        <!-- Nueva contraseña -->
+        <div>
+          <label for="new-password" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            Nueva Contraseña
+          </label>
+          <div class="relative">
+            <input 
+              id="new-password" 
+              type="password" 
+              required
+              minlength="6"
+              class="w-full px-4 py-3 pr-12 rounded-lg bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-blue-500 outline-none text-gray-900 dark:text-gray-100"
+              placeholder="••••••••">
+            <button type="button" class="toggle-password-btn absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+              <svg class="eye-open w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+              </svg>
+              <svg class="eye-closed w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3l3.59 3.59M9.878 9.878l4.242 4.242M21 21l-3.59-3.59" />
+              </svg>
+            </button>
+          </div>
+          <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Mínimo 6 caracteres</p>
+        </div>
+
+        <!-- Confirmar contraseña -->
+        <div>
+          <label for="confirm-password" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            Confirmar Contraseña
+          </label>
+          <div class="relative">
+            <input 
+              id="confirm-password" 
+              type="password" 
+              required
+              minlength="6"
+              class="w-full px-4 py-3 pr-12 rounded-lg bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-blue-500 outline-none text-gray-900 dark:text-gray-100"
+              placeholder="••••••••">
+            <button type="button" class="toggle-password-btn absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+              <svg class="eye-open w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+              </svg>
+              <svg class="eye-closed w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3l3.59 3.59M9.878 9.878l4.242 4.242M21 21l-3.59-3.59" />
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Botón submit -->
+        <button 
+          id="submit-btn" 
+          type="submit"
+          class="w-full py-3 rounded-lg bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold hover:opacity-90 transition">
+          Restablecer Contraseña
+        </button>
+      </form>
+    </div>
+
+    <!-- ÉXITO -->
+    <div id="success-state" class="hidden w-full max-w-md bg-white dark:bg-gray-900 rounded-2xl shadow-2xl p-8 border border-gray-200 dark:border-gray-700">
+      <div class="text-center">
+        <div class="w-16 h-16 mx-auto flex items-center justify-center bg-green-100 dark:bg-green-900/30 rounded-full mb-4">
+          <svg class="w-8 h-8 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+          </svg>
+        </div>
+        <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">¡Contraseña Restablecida!</h2>
+        <p class="text-gray-600 dark:text-gray-400 mb-6">
+          Tu contraseña ha sido actualizada correctamente. Ya puedes iniciar sesión con tu nueva contraseña.
+        </p>
+        <a href="./login.html" 
+          class="inline-block py-3 px-6 rounded-lg bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold hover:opacity-90 transition">
+          Ir a Iniciar Sesión
+        </a>
+      </div>
+    </div>
+
+  </main>
+
+  <div id="toast-container" class="fixed top-4 right-4 space-y-3 z-[9999]" aria-live="polite"></div>
+
+  <script src="../js/notification.js" defer></script>
+  <script src="../js/recuperacion.js" defer></script>
+</body>
+
+</html>

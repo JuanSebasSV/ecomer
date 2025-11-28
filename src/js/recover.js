@@ -1,9 +1,8 @@
-//  RECUPERAR CONTRASEÑA
+// ecomer/src/js/recover.js
+// RECUPERAR CONTRASEÑA - Solicitar email y redirigir a verificar código
 
 (function initRecover() {
   const form = document.getElementById("recover-form");
-  const step1 = document.getElementById("step-1");
-  const step2 = document.getElementById("step-2");
   const recoverBtn = document.getElementById("recover-btn");
   const emailInput = document.getElementById("recover-email");
 
@@ -55,13 +54,17 @@
         throw new Error(result.message || "Error al enviar el correo");
       }
 
-      // Mostrar paso 2 (confirmación)
-      if (step1) step1.classList.add("hidden");
-      if (step2) step2.classList.remove("hidden");
+      // Guardar el email en localStorage para la siguiente pantalla
+      localStorage.setItem('recovery-email', email);
 
       if (window.showNotification) {
-        window.showNotification("Correo enviado exitosamente", "success");
+        window.showNotification("Código enviado a tu correo", "success");
       }
+
+      // Redirigir a la página de verificación de código después de 1 segundo
+      setTimeout(() => {
+        window.location.href = "../pages/verificar.html";
+      }, 1000);
 
     } catch (error) {
       console.error("Error al recuperar contraseña:", error);
