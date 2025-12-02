@@ -87,6 +87,14 @@
   }
 })();
 
+// Botón Ver Pedidos
+const btnVerPedidos = document.getElementById("btn-ver-pedidos");
+if (btnVerPedidos) {
+  btnVerPedidos.addEventListener("click", () => {
+    window.location.href = "./pedidos.html";
+  });
+}
+
 // ---------- Persistencia de carrito (global, main.js) ----------
 const CART_KEY = 'techstore_cart';
 
@@ -113,7 +121,7 @@ function writeCartLocal(cart) {
 }
 
 
-// ---- Control de iconos de usuario (login / avatar + menú) ----
+// Control de iconos de usuario (login / avatar + menú) ----
 (function handleUserIcon() {
   const loginIcon = document.getElementById("user-login-icon");
   const avatar = document.getElementById("user-avatar");

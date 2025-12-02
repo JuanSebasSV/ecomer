@@ -1,7 +1,6 @@
 import dotenv from 'dotenv';
 dotenv.config();
 
-// 🔍 AGREGA ESTAS LÍNEAS JUSTO DESPUÉS
 console.log('=== VERIFICANDO VARIABLES DE ENTORNO ===');
 console.log('EMAIL_USER:', process.env.EMAIL_USER);
 console.log('EMAIL_PASSWORD:', process.env.EMAIL_PASSWORD);
@@ -14,8 +13,7 @@ import "./db/db.js";
 import productosRouter from "./routes/productos.routes.js";
 import usersRouter from "./routes/user.routes.js";
 import loginRouter from "./routes/login.routes.js";
-
-// ... resto del código
+import checkoutRouter from "./routes/checkout.routes.js";
 
 const app = express();
 
@@ -32,6 +30,7 @@ app.get("/", (req, res) => {
 app.use("/api/productos", productosRouter);
 app.use("/api/users", usersRouter);
 app.use("/api/login", loginRouter);
+app.use("/api/checkout", checkoutRouter);
 
 // Servidor
 const PORT = 8081;

@@ -1,0 +1,113 @@
+// backend/models/order.models.js
+import mongoose from "mongoose";
+
+const orderSchema = new mongoose.Schema({
+  orderId: {
+    type: String,
+    required: true,
+    unique: true,
+    index: true
+  },
+  
+  // Usuario (puede ser null si compra como invitado)
+  usuarioId: {
+    type: String, // Usamos String para compatibilidad con userId personalizado
+    default: null,
+    index: true
+  },
+  
+  // Datos del usuario/comprador
+  usuarioData: {
+    nombre: { type: String, required: true },
+    correo: { type: String, default: "" },
+    telefono: { type: String, required: true }
+  },
+  
+  // Información de facturación/entrega
+  billing: {
+    name: { type: String, required: true },
+    phone: { type: String, required: true },
+    address: { type: String, required: true },
+    city: { type: String, default: "" },
+    department: { type: String, default: "" }
+  },
+  
+  // Método de pago
+  payment: {
+    method: { 
+      type: String, 
+      enum: ['card', 'cash', 'transfer', 'pse', 'other'],
+      required: true 
+    },
+    // Datos de tarjeta (guardamos solo los últimos 4 dígitos por seguridad)
+    card: {
+      lastFour: { type: String, default: null },
+      holder: { type: String, default: null },
+      brand: { type: String, default: null } // Visa, Mastercard, etc.
+    },
+    status: {
+      type: String,
+      enum: ['pending', 'approved', 'rejected', 'refunded'],
+      default: 'approved' // Simulado como aprobado por defecto
+    }
+  },
+  
+  // Productos comprados
+  products: [{
+    productId: { type: String, required: true },
+    title: { type: String, required: true },
+    qty: { type: Number, required: true, min: 1 },
+    price: { type: Number, required: true, min: 0 },
+    image: { type: String, default: "" }
+  }],
+  
+  // Montos
+  subtotal: { type: Number, required: true, min: 0 },
+  envio: { type: Number, default: 0, min: 0 },
+  descuento: { type: Number, default: 0, min: 0 },
+  total: { type: Number, required: true, min: 0 },
+  
+  // Estado de la orden
+  status: {
+    type: String,
+    enum: ['pending', 'processing', 'shipped', 'delivered', 'cancelled'],
+    default: 'pending'
+  },
+  
+  // Notas adicionales
+  notes: { type: String, default: "" },
+  
+  // Metadatos
+  meta: {
+    userAgent: { type: String, default: null },
+    ip: { type: String, default: null },
+    from: { type: String, default: null },
+    ts: { type: Number, default: Date.now }
+  },
+  
+  // Fechas
+  createdAt: { 
+    type: Date, 
+    default: Date.now,
+    index: true
+  },
+  
+  updatedAt: { 
+    type: Date, 
+    default: Date.now 
+  }
+});
+
+// Índice compuesto para consultas frecuentes
+orderSchema.index({ usuarioId: 1, createdAt: -1 });
+orderSchema.index({ status: 1, createdAt: -1 });
+
+// Actualizar updatedAt antes de guardar
+orderSchema.pre('save', function(next) {
+  this.updatedAt = Date.now();
+  next();
+});
+
+const Order = mongoose.model("Order", orderSchema, "orders");
+
+export default Order;

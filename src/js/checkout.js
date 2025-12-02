@@ -1,7 +1,10 @@
-// Checkout page handler
+//  CHECKOUT PAGE
+
 (function setupCheckoutPage() {
+  // Solo ejecutar si estamos en la página de checkout
   if (!window.location.pathname.includes("checkout.html")) return;
 
+  //  ELEMENTOS DEL DOM
   const form = document.getElementById("checkout-form");
   const itemsContainer = document.getElementById("checkout-items");
   const subtotalEl = document.getElementById("checkout-subtotal");
@@ -11,164 +14,400 @@
   const btnCancel = document.getElementById("btn-cancel");
   const cardFields = document.getElementById("card-fields");
 
-  // lee carrito usando tus helpers
-  const cart = readCartLocal() || [];
-  if (!itemsContainer || !subtotalEl || !totalEl) return;
+  //  FUNCIONES AUXILIARES 
+  
+  // Leer carrito desde localStorage
+  function readCartLocal() {
+    try {
+      const CART_KEY = 'techstore_cart';
+      return JSON.parse(localStorage.getItem(CART_KEY)) || [];
+    } catch (e) {
+      console.error('Error leyendo carrito:', e);
+      return [];
+    }
+  }
 
-  // mostrar items en resumen
+  // Escribir carrito en localStorage
+  function writeCartLocal(cart) {
+    try {
+      const CART_KEY = 'techstore_cart';
+      localStorage.setItem(CART_KEY, JSON.stringify(cart));
+    } catch (e) {
+      console.error('Error guardando carrito:', e);
+    }
+  }
+
+  // Formatear precio
+  function formatPrice(n) {
+    return '$' + Number(n || 0).toLocaleString('es-CO');
+  }
+
+  // Sistema de notificaciones (si no existe window.showNotification)
+  function showNotification(message, type = "info") {
+    if (window.showNotification) {
+      window.showNotification(message, type);
+      return;
+    }
+
+    // Fallback si no existe la función global
+    let container = document.getElementById("toast-container");
+    if (!container) {
+      container = document.createElement("div");
+      container.id = "toast-container";
+      container.className = "fixed top-4 right-4 space-y-3 z-[9999]";
+      document.body.appendChild(container);
+    }
+
+    const toast = document.createElement("div");
+    toast.className = `px-4 py-3 rounded-lg shadow-lg text-white ${
+      type === "success" ? "bg-green-600" : 
+      type === "error" ? "bg-red-600" : 
+      "bg-blue-600"
+    }`;
+    toast.textContent = message;
+    container.appendChild(toast);
+
+    setTimeout(() => {
+      toast.style.opacity = "0";
+      setTimeout(() => toast.remove(), 300);
+    }, 3000);
+  }
+
+  //  CARGAR Y RENDERIZAR ITEMS DEL CARRITO
+  const cart = readCartLocal();
+
   function renderCheckoutItems() {
+    if (!itemsContainer || !subtotalEl || !totalEl) return;
+
     itemsContainer.innerHTML = "";
+
     if (!cart.length) {
-      itemsContainer.innerHTML = '<div class="text-sm text-gray-500 dark:text-gray-400">No hay productos en el carrito.</div>';
+      itemsContainer.innerHTML = `
+        <div class="text-center py-8">
+          <svg class="w-16 h-16 mx-auto text-gray-400 dark:text-gray-600 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+          </svg>
+          <p class="text-gray-500 dark:text-gray-400">No hay productos en el carrito</p>
+          <a href="./productos.html" class="inline-block mt-4 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+            Ver Productos
+          </a>
+        </div>
+      `;
       subtotalEl.textContent = "$0";
+      if (shippingEl) shippingEl.textContent = "Gratis";
       totalEl.textContent = "$0";
+      if (btnPay) btnPay.disabled = true;
       return;
     }
 
     let subtotal = 0;
-    cart.forEach(it => {
-      const lineTotal = (Number(it.price || 0) * Number(it.qty || 1));
+
+    cart.forEach(item => {
+      const lineTotal = (Number(item.price || 0) * Number(item.qty || 1));
       subtotal += lineTotal;
 
       const row = document.createElement("div");
-      row.className = "flex items-center justify-between p-3 rounded-lg bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800";
+      row.className = "flex items-center justify-between p-3 rounded-lg bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 hover:border-gray-200 dark:hover:border-gray-700 transition";
+      
       row.innerHTML = `
-        <div class="flex items-center gap-3">
-          <img src="${it.image || '../images/placeholder.png'}" class="w-12 h-12 object-cover rounded-md" alt="${(it.title||'Producto')}">
-          <div>
-            <div class="font-medium text-gray-800 dark:text-gray-100">${(it.title||'Producto')}</div>
-            <div class="text-xs text-gray-500 dark:text-gray-400">x${it.qty || 1}</div>
+        <div class="flex items-center gap-3 flex-1">
+          <img 
+            src="${item.image || '../images/placeholder.png'}" 
+            class="w-16 h-16 object-cover rounded-lg shadow-sm" 
+            alt="${item.title || 'Producto'}"
+            onerror="this.src='../images/placeholder.png'">
+          <div class="flex-1">
+            <div class="font-semibold text-gray-800 dark:text-gray-100">${item.title || 'Producto'}</div>
+            <div class="text-sm text-gray-500 dark:text-gray-400">
+              Cantidad: <span class="font-medium">${item.qty || 1}</span>
+            </div>
+            <div class="text-sm text-gray-600 dark:text-gray-300 mt-1">
+              ${formatPrice(item.price)} c/u
+            </div>
           </div>
         </div>
         <div class="text-right">
-          <div class="font-semibold text-gray-800 dark:text-gray-100">${formatPrice(lineTotal)}</div>
+          <div class="font-bold text-lg text-gray-800 dark:text-gray-100">${formatPrice(lineTotal)}</div>
         </div>
       `;
+      
       itemsContainer.appendChild(row);
     });
 
-    // shipping (puedes modificar lógica según reglas)
-    const shipping = 0;
+    // Calcular envío (puedes personalizar la lógica)
+    const shipping = subtotal > 100000 ? 0 : 5000; // Envío gratis si compra más de $100,000
+    const total = subtotal + shipping;
+
+    // Actualizar UI
     subtotalEl.textContent = formatPrice(subtotal);
-    shippingEl.textContent = shipping === 0 ? "Gratis" : formatPrice(shipping);
-    totalEl.textContent = formatPrice(subtotal + shipping);
+    if (shippingEl) {
+      shippingEl.textContent = shipping === 0 ? "Gratis" : formatPrice(shipping);
+    }
+    totalEl.textContent = formatPrice(total);
+
+    if (btnPay) btnPay.disabled = false;
   }
 
-  renderCheckoutItems();
-
-  // Mostrar/ocultar campos de tarjeta según método seleccionado
+  //  MOSTRAR/OCULTAR CAMPOS DE TARJETA
   function updatePaymentFields() {
+    if (!form || !cardFields) return;
+    
     const method = form.querySelector('input[name="payment-method"]:checked')?.value;
-    if (!cardFields) return;
+    
     if (method === "card") {
-      cardFields.style.display = "";
+      cardFields.style.display = "block";
+      // Hacer campos de tarjeta requeridos
+      cardFields.querySelectorAll('input').forEach(input => {
+        input.setAttribute('required', 'required');
+      });
     } else {
       cardFields.style.display = "none";
+      // Remover requerido de campos de tarjeta
+      cardFields.querySelectorAll('input').forEach(input => {
+        input.removeAttribute('required');
+      });
     }
   }
-  // init
-  updatePaymentFields();
-  form.addEventListener("change", (e) => {
-    if (e.target.name === "payment-method") updatePaymentFields();
-  });
 
-  // Cancelar vuelve al carrito
-  btnCancel?.addEventListener("click", () => {
-    window.location.href = "./car.html";
-  });
+  //  VALIDAR CAMPOS DEL FORMULARIO
+  function validateForm() {
+    const name = document.getElementById("billing-name")?.value.trim();
+    const phone = document.getElementById("billing-phone")?.value.trim();
+    const address = document.getElementById("billing-address")?.value.trim();
+    const method = form.querySelector('input[name="payment-method"]:checked')?.value;
 
-  // Evento pagar (simulado)
-  btnPay?.addEventListener("click", async (ev) => {
-    ev.preventDefault();
+    if (!name || !phone || !address) {
+      showNotification("Por favor completa todos los campos obligatorios", "error");
+      return false;
+    }
 
-    // Valida campos mínimos
+    // Validar teléfono (básico)
+    if (phone.length < 7) {
+      showNotification("Por favor ingresa un teléfono válido", "error");
+      return false;
+    }
+
+    // Si es pago con tarjeta, validar campos de tarjeta
+    if (method === "card") {
+      const cardNumber = document.getElementById("card-number")?.value.replace(/\s+/g, "");
+      const cardExp = document.getElementById("card-exp")?.value;
+      const cardCvc = document.getElementById("card-cvc")?.value;
+
+      if (!cardNumber || cardNumber.length < 13) {
+        showNotification("Por favor ingresa un número de tarjeta válido", "error");
+        return false;
+      }
+
+      if (!cardExp || !cardExp.match(/^\d{2}\/\d{2}$/)) {
+        showNotification("Por favor ingresa una fecha de expiración válida (MM/AA)", "error");
+        return false;
+      }
+
+      if (!cardCvc || cardCvc.length < 3) {
+        showNotification("Por favor ingresa un CVV válido", "error");
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  //  PROCESAR PAGO
+  async function processPay() {
+    if (!validateForm()) return;
+    if (!cart.length) {
+      showNotification("Tu carrito está vacío", "error");
+      return;
+    }
+
+    // Obtener datos del formulario
     const name = document.getElementById("billing-name")?.value.trim();
     const phone = document.getElementById("billing-phone")?.value.trim();
     const address = document.getElementById("billing-address")?.value.trim();
     const method = form.querySelector('input[name="payment-method"]:checked')?.value || "card";
 
-    if (!name || !phone || !address) {
-      showNotification("Por favor completa nombre, teléfono y dirección.", "info");
-      return;
+    // CORRECCIÓN: Mapear "nequi" a "other" que es aceptado por el backend
+    let backendMethod = method;
+    if (method === "nequi") {
+      backendMethod = "other"; // El backend acepta: 'card', 'cash', 'transfer', 'pse', 'other'
     }
 
-    if (!cart.length) {
-      showNotification("Tu carrito está vacío.", "info");
-      return;
-    }
-
-    // Construir payload
-    const products = cart.map(it => ({
-      id: it.id,
-      title: it.title,
-      qty: it.qty || 1,
-      price: Number(it.price || 0)
+    // Construir productos para el backend
+    const products = cart.map(item => ({
+      id: item.id,
+      title: item.title,
+      qty: item.qty || 1,
+      price: Number(item.price || 0),
+      image: item.image || ""
     }));
 
-    const subtotal = products.reduce((s,p) => s + (p.price * p.qty), 0);
-    const envio = 0;
+    const subtotal = products.reduce((sum, p) => sum + (p.price * p.qty), 0);
+    const envio = subtotal > 100000 ? 0 : 5000;
     const total = subtotal + envio;
 
+    // Obtener datos del usuario logueado (si existe)
     const usuario = JSON.parse(localStorage.getItem("user") || "null");
+
+    // IMPORTANTE: Usar el userId personalizado (USR000001), NO el _id de MongoDB
+    const usuarioIdFinal = usuario?.userId || usuario?.id || null;
+
+    console.log("👤 Usuario desde localStorage:", usuario);
+    console.log("🔑 UsuarioId que se enviará:", usuarioIdFinal);
+
+    // Construir payload
     const payload = {
-      usuarioId: usuario?.id || null,
-      usuarioData: usuario || null,
-      billing: { name, phone, address },
+      usuarioId: usuarioIdFinal,
+      usuarioData: {
+        nombre: usuario?.nombre || name,
+        correo: usuario?.correo || "",
+        telefono: usuario?.telefono || phone
+      },
+      billing: { 
+        name, 
+        phone, 
+        address,
+        city: "",
+        department: ""
+      },
       payment: {
-        method,
-        card: {
-          number: document.getElementById("card-number")?.value.replace(/\s+/g,"") || null,
+        method: backendMethod, // Usar el método mapeado
+        card: method === "card" ? {
+          number: document.getElementById("card-number")?.value.replace(/\s+/g, "") || null,
           exp: document.getElementById("card-exp")?.value || null,
           cvc: document.getElementById("card-cvc")?.value || null,
           holder: document.getElementById("card-name")?.value || name
-        }
+        } : null
       },
       products,
       subtotal,
       envio,
       total,
-      meta: { from: window.location.pathname, ts: Date.now() }
+      meta: {
+        from: window.location.pathname,
+        ts: Date.now()
+      }
     };
 
-    // Interfaz: bloquear botón mientras procesa
-    btnPay.disabled = true;
-    btnPay.classList.add("opacity-60", "cursor-not-allowed");
-    btnPay.textContent = "Procesando...";
+    // Deshabilitar botón mientras procesa
+    if (btnPay) {
+      btnPay.disabled = true;
+      btnPay.classList.add("opacity-60", "cursor-not-allowed");
+      btnPay.innerHTML = `
+        <svg class="animate-spin w-5 h-5 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+      `;
+    }
 
     try {
-      // LLamada al backend (ruta de ejemplo). Cambia la URL por la de tu servidor.
-      const res = await fetch("/api/checkout", {
+      // IMPORTANTE: Cambia esta URL por la ruta real de tu backend
+      const response = await fetch("http://localhost:8081/api/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload)
       });
 
-      const data = await res.json().catch(() => ({}));
+      const data = await response.json().catch(() => ({}));
 
-      if (res.ok) {
-        // Respuesta simulada exitosa
-        showNotification("Pago procesado correctamente. Gracias por tu compra.", "success");
+      if (response.ok) {
+        // Pago exitoso
+        showNotification("¡Pago procesado correctamente! Gracias por tu compra 🎉", "success");
 
-        // Opcional: limpiar carrito
+        // Limpiar carrito
         writeCartLocal([]);
 
-        // Redirigir a página de confirmación (puedes crear confirm.html)
+        // Actualizar contador del carrito en el header
+        const cartCounter = document.getElementById('cart-counter');
+        if (cartCounter) {
+          cartCounter.style.display = 'none';
+        }
+
+        // Redirigir a página de confirmación
         setTimeout(() => {
-          window.location.href = "./confirmacion.html?order=" + encodeURIComponent(data.orderId || "simulated-" + Date.now());
-        }, 900);
+          const orderId = data.orderId || "ORDER-" + Date.now();
+          window.location.href = `./confirmacion.html?order=${encodeURIComponent(orderId)}`;
+        }, 1500);
+
       } else {
-        const msg = data?.message || `Error procesando pago (${res.status})`;
-        showNotification(msg, "info");
+        // Error en el pago
+        const msg = data?.message || `Error procesando pago (${response.status})`;
+        showNotification(msg, "error");
       }
 
     } catch (err) {
       console.error("Error al comunicarse con el backend:", err);
-      showNotification("No se pudo conectar con el servidor de pagos.", "info");
+      showNotification("No se pudo conectar con el servidor. Por favor intenta nuevamente.", "error");
     } finally {
-      btnPay.disabled = false;
-      btnPay.classList.remove("opacity-60", "cursor-not-allowed");
-      btnPay.textContent = "Pagar ahora";
+      // Restaurar botón
+      if (btnPay) {
+        btnPay.disabled = false;
+        btnPay.classList.remove("opacity-60", "cursor-not-allowed");
+        btnPay.innerHTML = "Pagar ahora";
+      }
     }
-  });
+  }
+
+  //  EVENTOS
+
+  // Renderizar items al cargar
+  renderCheckoutItems();
+
+  // Cambio de método de pago
+  if (form) {
+    updatePaymentFields();
+    form.addEventListener("change", (e) => {
+      if (e.target.name === "payment-method") {
+        updatePaymentFields();
+      }
+    });
+  }
+
+  // Botón cancelar
+  if (btnCancel) {
+    btnCancel.addEventListener("click", () => {
+      window.location.href = "./car.html";
+    });
+  }
+
+  // Botón pagar
+  if (btnPay) {
+    btnPay.addEventListener("click", (e) => {
+      e.preventDefault();
+      processPay();
+    });
+  }
+
+  // Formateo automático de número de tarjeta
+  const cardNumberInput = document.getElementById("card-number");
+  if (cardNumberInput) {
+    cardNumberInput.addEventListener("input", (e) => {
+      let value = e.target.value.replace(/\s+/g, "").replace(/[^0-9]/g, "");
+      let formatted = value.match(/.{1,4}/g)?.join(" ") || value;
+      e.target.value = formatted;
+    });
+  }
+
+  // Formateo de fecha de expiración (MM/AA)
+  const cardExpInput = document.getElementById("card-exp");
+  if (cardExpInput) {
+    cardExpInput.addEventListener("input", (e) => {
+      let value = e.target.value.replace(/\D/g, "");
+      if (value.length >= 2) {
+        value = value.slice(0, 2) + "/" + value.slice(2, 4);
+      }
+      e.target.value = value;
+    });
+  }
+
+  // Limitar CVV a 4 dígitos
+  const cardCvcInput = document.getElementById("card-cvc");
+  if (cardCvcInput) {
+    cardCvcInput.addEventListener("input", (e) => {
+      e.target.value = e.target.value.replace(/\D/g, "").slice(0, 4);
+    });
+  }
+
+  console.log("✅ Checkout inicializado correctamente");
 
 })();

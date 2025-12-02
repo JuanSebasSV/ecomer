@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TechStore Pro - Mis Pedidos</title>
+  <link rel="stylesheet" href="../output.css">
+  <style>
+    /* Estilos para el carrusel de imágenes */
+    [id^="carousel-"] {
+      scroll-behavior: smooth;
+      -webkit-overflow-scrolling: touch;
+    }
+    
+    /* Ocultar scrollbar pero mantener funcionalidad */
+    [id^="carousel-"]::-webkit-scrollbar {
+      display: none;
+    }
+    
+    [id^="carousel-"] {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+  </style>
+</head>
+
+<body class="bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-gray-100 font-sans transition-colors duration-500">
+
+  <!-- HEADER -->
+  <header class="bg-white/80 dark:bg-gray-900/80 shadow-lg sticky top-0 z-50 transition-colors duration-500 backdrop-blur">
+    <nav class="relative max-w-7xl mx-auto px-4 py-4">
+      <div class="flex items-center justify-between relative">
+
+        <!-- LOGO -->
+        <div class="flex items-center flex-shrink-0">
+          <div class="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-3 py-2 rounded-lg mr-3">
+            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z" />
+            </svg>
+          </div>
+          <h1 class="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+            <a href="./index.html">TechStore Pro</a>
+          </h1>
+        </div>
+
+        <!-- MENÚ CENTRADO -->
+        <div class="hidden md:flex absolute left-1/2 transform -translate-x-1/2 space-x-6">
+          <a href="./index.html" class="text-gray-700 dark:text-gray-200 hover:text-blue-600 font-medium transition-colors">Inicio</a>
+          <a href="./productos.html" class="text-gray-700 dark:text-gray-200 hover:text-blue-600 font-medium transition-colors">Productos</a>
+          <a href="./contactenos.html" class="text-gray-700 dark:text-gray-200 hover:text-blue-600 font-medium transition-colors">Contacto</a>
+        </div>
+
+        <!-- ICONOS DERECHA -->
+        <div class="flex items-center space-x-3 fixed top-4 right-4 z-50">
+          <button id="theme-toggle" class="p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition">
+            <svg id="theme-toggle-light-icon" class="w-6 h-6 hidden" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="5" />
+              <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" />
+            </svg>
+            <svg id="theme-toggle-dark-icon" class="w-6 h-6 hidden" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" />
+            </svg>
+          </button>
+
+          <a href="./car.html" class="relative group p-2 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 dark:hover:from-gray-800 dark:hover:to-gray-700 rounded-lg transition-all transform hover:scale-105">
+            <svg class="w-6 h-6 text-gray-700 dark:text-gray-200" fill="none" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-1.1 5m1.1-5l10 0m-10 0v5m10-5v5m0 0a2 2 0 11-4 0m-6 0a2 2 0 114 0" />
+            </svg>
+            <span id="cart-counter" class="absolute -top-2 -right-2 bg-gradient-to-r from-red-500 via-pink-500 to-red-600 text-white text-xs font-bold rounded-full min-w-5 h-5 flex items-center justify-center px-1 border-2 border-white shadow-lg" style="display:none;">0</span>
+          </a>
+
+          <div id="user-avatar" class="hidden w-9 h-9 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-full flex items-center justify-center font-bold cursor-pointer"></div>
+
+          <div id="user-menu" class="hidden absolute top-14 right-4 w-48 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl shadow-xl py-2 z-50">
+            <button id="btn-ver-perfil" class="w-full text-left px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-800 transition">Ver perfil</button>
+            <button id="btn-ver-pedidos" class="w-full text-left px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-800 transition">Mis pedidos</button>
+            <button id="btn-cerrar-sesion" class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 dark:hover:bg-gray-800 transition">Cerrar sesión</button>
+          </div>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <!-- MAIN -->
+  <main class="max-w-7xl mx-auto px-4 py-12">
+    
+    <!-- Título -->
+    <div class="mb-8">
+      <h1 class="text-3xl font-bold text-gray-900 dark:text-gray-100">Mis Pedidos</h1>
+      <p class="text-gray-600 dark:text-gray-400 mt-2">Historial de tus compras en TechStore Pro</p>
+    </div>
+
+    <!-- Estado de carga -->
+    <div id="loading-state" class="text-center py-12">
+      <svg class="animate-spin w-12 h-12 mx-auto text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+      </svg>
+      <p class="mt-4 text-gray-600 dark:text-gray-400">Cargando pedidos...</p>
+    </div>
+
+    <!-- Sin sesión -->
+    <div id="no-session" class="hidden text-center py-12">
+      <svg class="w-16 h-16 mx-auto text-gray-400 dark:text-gray-600 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+      </svg>
+      <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">Inicia sesión</h2>
+      <p class="text-gray-600 dark:text-gray-400 mb-6">Debes iniciar sesión para ver tus pedidos</p>
+      <a href="./login.html" class="inline-block px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-lg hover:opacity-90 transition">Iniciar Sesión</a>
+    </div>
+
+    <!-- Sin pedidos -->
+    <div id="no-orders" class="hidden text-center py-12">
+      <svg class="w-16 h-16 mx-auto text-gray-400 dark:text-gray-600 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+      </svg>
+      <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">Sin pedidos aún</h2>
+      <p class="text-gray-600 dark:text-gray-400 mb-6">Todavía no has realizado ninguna compra</p>
+      <a href="./productos.html" class="inline-block px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-lg hover:opacity-90 transition">Ver Productos</a>
+    </div>
+
+    <!-- Lista de pedidos -->
+    <div id="orders-container" class="hidden space-y-6"></div>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="bg-gray-900 dark:bg-gray-950 text-white py-12 transition-colors duration-500 mt-12">
+    <div class="max-w-7xl mx-auto px-4">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div>
+          <div class="flex items-center mb-4">
+            <div class="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-2 rounded-lg mr-3">
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"/></svg>
+            </div>
+            <h3 class="text-xl font-bold">TechStore Pro</h3>
+          </div>
+          <p class="text-gray-400 mb-4">Tu tienda de tecnología de confianza.</p>
+        </div>
+        <div>
+          <h3 class="text-lg font-semibold mb-4">Enlaces</h3>
+          <ul class="space-y-2 text-gray-400">
+            <li><a href="./index.html" class="hover:text-white">Inicio</a></li>
+            <li><a href="./productos.html" class="hover:text-white">Productos</a></li>
+            <li><a href="./car.html" class="hover:text-white">Carrito</a></li>
+          </ul>
+        </div>
+        <div>
+          <h3 class="text-lg font-semibold mb-4">Atención</h3>
+          <ul class="space-y-2 text-gray-400">
+            <li><a href="./contactenos.html" class="hover:text-white">Contacto</a></li>
+            <li><a href="./atencion.html" class="hover:text-white">Envíos</a></li>
+          </ul>
+        </div>
+        <div>
+          <h3 class="text-lg font-semibold mb-4">Legal</h3>
+          <ul class="space-y-2 text-gray-400">
+            <li><a href="./legal.html#terminos" class="hover:text-white">Términos</a></li>
+            <li><a href="./legal.html#privacidad" class="hover:text-white">Privacidad</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
+        <p>&copy; 2025 TechStore Pro. Todos los derechos reservados.</p>
+      </div>
+    </div>
+  </footer>
+
+  <div id="toast-container" class="fixed top-4 right-4 space-y-3 z-[9999]"></div>
+
+  <script src="../js/main.js" defer></script>
+  <script src="../js/notifications.js" defer></script>
+  <script src="../js/pedidos.js" defer></script>
+</body>
+</html>
