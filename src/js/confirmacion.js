@@ -1,5 +1,5 @@
 // confirmacion.js
-// PÁGINA DE CONFIRMACIÓN DE PEDIDO
+// PÁGINA DE CONFIRMACIÓN DE PEDIDO - VERSIÓN CORREGIDA CON IMÁGENES
 
 (function initConfirmacion() {
   const API_BASE = "http://localhost:8081/api/checkout";
@@ -8,6 +8,56 @@
   const loadingState = document.getElementById("loading-state");
   const confirmationContent = document.getElementById("confirmation-content");
   const errorState = document.getElementById("error-state");
+
+  // =====================================================
+  //  FUNCIÓN HELPER PARA NORMALIZAR RUTAS DE IMAGEN
+  // =====================================================
+  function normalizeImagePath(imagePath) {
+    console.log('🖼️ Ruta original recibida:', imagePath);
+    
+    if (!imagePath) {
+      console.log('⚠️ No hay imagen, usando placeholder');
+      return '../images/placeholder.png';
+    }
+    
+    // Si ya es una URL completa, devolverla tal cual
+    if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
+      console.log('✅ URL completa detectada');
+      return imagePath;
+    }
+    
+    // Si es una ruta relativa que empieza con ../ o ./, devolverla tal cual
+    if (imagePath.startsWith('../') || imagePath.startsWith('./')) {
+      console.log('✅ Ruta relativa correcta detectada');
+      return imagePath;
+    }
+    
+    // Si empieza con src/, necesita retroceder un nivel más
+    if (imagePath.startsWith('src/')) {
+      const normalizedPath = '../' + imagePath;
+      console.log('🔧 Convertida de src/ a:', normalizedPath);
+      return normalizedPath;
+    }
+    
+    // Si es solo el nombre del archivo o empieza con images/, normalizarla
+    if (imagePath.startsWith('images/')) {
+      const normalizedPath = '../' + imagePath;
+      console.log('🔧 Agregado ../ a images/:', normalizedPath);
+      return normalizedPath;
+    }
+    
+    // Si es solo el nombre del archivo, agregar la ruta completa
+    if (!imagePath.includes('/')) {
+      const normalizedPath = '../images/' + imagePath;
+      console.log('🔧 Nombre de archivo solo, ruta completa:', normalizedPath);
+      return normalizedPath;
+    }
+    
+    // Por defecto, asumir que necesita ../ al inicio
+    const normalizedPath = '../' + imagePath;
+    console.log('🔧 Caso por defecto, agregado ../:', normalizedPath);
+    return normalizedPath;
+  }
 
   // =====================================================
   //  OBTENER ORDER ID DE LA URL
@@ -43,6 +93,8 @@
   // =====================================================
   async function cargarDetallesPedido(orderId) {
     try {
+      console.log(`📡 Cargando detalles del pedido: ${orderId}`);
+      
       const response = await fetch(`${API_BASE}/order/${orderId}`);
       const result = await response.json();
 
@@ -58,6 +110,8 @@
         throw new Error("No se encontró el pedido");
       }
 
+      console.log("✅ Pedido cargado:", orden);
+
       // Mostrar contenido de confirmación
       if (confirmationContent) {
         confirmationContent.classList.remove("hidden");
@@ -65,7 +119,7 @@
       }
 
     } catch (error) {
-      console.error("Error al cargar pedido:", error);
+      console.error("❌ Error al cargar pedido:", error);
       if (loadingState) loadingState.classList.add("hidden");
       if (errorState) errorState.classList.remove("hidden");
       
@@ -100,16 +154,16 @@
         
         orden.products.forEach((p, idx) => {
           html += '<div class="flex-shrink-0 w-32 h-32 relative group">';
-          if (p.image) {
-            html += `<img src="${p.image}" class="w-full h-full object-cover rounded-lg border-2 border-gray-200 dark:border-gray-700 group-hover:border-blue-500 transition-all cursor-pointer" alt="${p.title}" onerror="this.src='../images/placeholder.png'" onclick="showProductDetailConfirm(${idx})">`;
-            html += '<div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-all rounded-lg"></div>';
-            html += `<div class="absolute bottom-1 right-1 bg-blue-600 text-white text-xs px-2 py-1 rounded-full font-semibold">×${p.qty}</div>`;
-          } else {
-            html += '<div class="w-full h-full bg-gray-200 dark:bg-gray-700 rounded-lg flex items-center justify-center">';
-            html += '<svg class="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">';
-            html += '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />';
-            html += '</svg></div>';
-          }
+          
+          // CRÍTICO: Normalizar la ruta de la imagen antes de usarla
+          const normalizedImage = normalizeImagePath(p.image);
+          console.log(`📸 Producto ${idx}: ${p.title}`);
+          console.log(`   - Imagen original: "${p.image}"`);
+          console.log(`   - Imagen normalizada: "${normalizedImage}"`);
+          
+          html += `<img src="${normalizedImage}" class="w-full h-full object-cover rounded-lg border-2 border-gray-200 dark:border-gray-700 group-hover:border-blue-500 transition-all cursor-pointer" alt="${p.title}" onerror="this.src='../images/placeholder.png'" onclick="showProductDetailConfirm(${idx})">`;
+          html += '<div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-all rounded-lg"></div>';
+          html += `<div class="absolute bottom-1 right-1 bg-blue-600 text-white text-xs px-2 py-1 rounded-full font-semibold">×${p.qty}</div>`;
           html += '</div>';
         });
         
@@ -129,11 +183,14 @@
         html += '</div>';
       } else {
         // Un solo producto - imagen grande
-        if (orden.products[0].image) {
-          html += '<div class="mb-4">';
-          html += `<img src="${orden.products[0].image}" class="w-full h-48 object-cover rounded-lg border-2 border-gray-200 dark:border-gray-700" alt="${orden.products[0].title}" onerror="this.src='../images/placeholder.png'">`;
-          html += '</div>';
-        }
+        const normalizedImage = normalizeImagePath(orden.products[0].image);
+        console.log(`📸 Producto único: ${orden.products[0].title}`);
+        console.log(`   - Imagen original: "${orden.products[0].image}"`);
+        console.log(`   - Imagen normalizada: "${normalizedImage}"`);
+        
+        html += '<div class="mb-4">';
+        html += `<img src="${normalizedImage}" class="w-full h-48 object-cover rounded-lg border-2 border-gray-200 dark:border-gray-700" alt="${orden.products[0].title}" onerror="this.src='../images/placeholder.png'">`;
+        html += '</div>';
       }
       
       // Lista de productos
@@ -233,6 +290,12 @@
     
     const product = window.currentOrder.products[productIndex];
     
+    // CRÍTICO: Normalizar la imagen antes de mostrarla en el modal
+    const normalizedImage = normalizeImagePath(product.image);
+    console.log(`🔍 Modal - Producto: ${product.title}`);
+    console.log(`   - Imagen original: "${product.image}"`);
+    console.log(`   - Imagen normalizada: "${normalizedImage}"`);
+    
     const modal = document.createElement('div');
     modal.className = 'fixed inset-0 bg-black bg-opacity-50 z-[9999] flex items-center justify-center p-4';
     modal.onclick = (e) => {
@@ -254,7 +317,7 @@
         
         <div class="mb-6">
           <img 
-            src="${product.image || '../images/placeholder.png'}" 
+            src="${normalizedImage}" 
             alt="${product.title}"
             class="w-full h-80 object-cover rounded-lg"
             onerror="this.src='../images/placeholder.png'"
@@ -298,16 +361,6 @@
   };
 
   // =====================================================
-  //  BOTÓN VER PEDIDOS
-  // =====================================================
-  const btnVerPedidos = document.getElementById("btn-ver-pedidos");
-  if (btnVerPedidos) {
-    btnVerPedidos.addEventListener("click", () => {
-      window.location.href = "./pedidos.html";
-    });
-  }
-
-  // =====================================================
   //  INICIALIZAR
   // =====================================================
   const orderId = getOrderIdFromUrl();
@@ -315,9 +368,11 @@
   if (!orderId) {
     if (loadingState) loadingState.classList.add("hidden");
     if (errorState) errorState.classList.remove("hidden");
-    console.error("No se proporcionó un ID de pedido");
+    console.error("❌ No se proporcionó un ID de pedido");
     return;
   }
+
+  console.log(`🚀 Inicializando confirmación para pedido: ${orderId}`);
 
   // Cargar detalles del pedido
   cargarDetallesPedido(orderId);

@@ -14,15 +14,15 @@
   const btnCancel = document.getElementById("btn-cancel");
   const cardFields = document.getElementById("card-fields");
 
-  //  FUNCIONES AUXILIARES 
-  
+  //  FUNCIONES AUXILIARES
+
   // Leer carrito desde localStorage
   function readCartLocal() {
     try {
-      const CART_KEY = 'techstore_cart';
+      const CART_KEY = "techstore_cart";
       return JSON.parse(localStorage.getItem(CART_KEY)) || [];
     } catch (e) {
-      console.error('Error leyendo carrito:', e);
+      console.error("Error leyendo carrito:", e);
       return [];
     }
   }
@@ -30,16 +30,16 @@
   // Escribir carrito en localStorage
   function writeCartLocal(cart) {
     try {
-      const CART_KEY = 'techstore_cart';
+      const CART_KEY = "techstore_cart";
       localStorage.setItem(CART_KEY, JSON.stringify(cart));
     } catch (e) {
-      console.error('Error guardando carrito:', e);
+      console.error("Error guardando carrito:", e);
     }
   }
 
   // Formatear precio
   function formatPrice(n) {
-    return '$' + Number(n || 0).toLocaleString('es-CO');
+    return "$" + Number(n || 0).toLocaleString("es-CO");
   }
 
   // Sistema de notificaciones (si no existe window.showNotification)
@@ -60,9 +60,11 @@
 
     const toast = document.createElement("div");
     toast.className = `px-4 py-3 rounded-lg shadow-lg text-white ${
-      type === "success" ? "bg-green-600" : 
-      type === "error" ? "bg-red-600" : 
-      "bg-blue-600"
+      type === "success"
+        ? "bg-green-600"
+        : type === "error"
+        ? "bg-red-600"
+        : "bg-blue-600"
     }`;
     toast.textContent = message;
     container.appendChild(toast);
@@ -102,22 +104,25 @@
 
     let subtotal = 0;
 
-    cart.forEach(item => {
-      const lineTotal = (Number(item.price || 0) * Number(item.qty || 1));
+    cart.forEach((item) => {
+      const lineTotal = Number(item.price || 0) * Number(item.qty || 1);
       subtotal += lineTotal;
 
       const row = document.createElement("div");
-      row.className = "flex items-center justify-between p-3 rounded-lg bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 hover:border-gray-200 dark:hover:border-gray-700 transition";
-      
+      row.className =
+        "flex items-center justify-between p-3 rounded-lg bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 hover:border-gray-200 dark:hover:border-gray-700 transition";
+
       row.innerHTML = `
         <div class="flex items-center gap-3 flex-1">
           <img 
-            src="${item.image || '../images/placeholder.png'}" 
+            src="${item.image || "../images/placeholder.png"}" 
             class="w-16 h-16 object-cover rounded-lg shadow-sm" 
-            alt="${item.title || 'Producto'}"
+            alt="${item.title || "Producto"}"
             onerror="this.src='../images/placeholder.png'">
           <div class="flex-1">
-            <div class="font-semibold text-gray-800 dark:text-gray-100">${item.title || 'Producto'}</div>
+            <div class="font-semibold text-gray-800 dark:text-gray-100">${
+              item.title || "Producto"
+            }</div>
             <div class="text-sm text-gray-500 dark:text-gray-400">
               Cantidad: <span class="font-medium">${item.qty || 1}</span>
             </div>
@@ -127,10 +132,12 @@
           </div>
         </div>
         <div class="text-right">
-          <div class="font-bold text-lg text-gray-800 dark:text-gray-100">${formatPrice(lineTotal)}</div>
+          <div class="font-bold text-lg text-gray-800 dark:text-gray-100">${formatPrice(
+            lineTotal
+          )}</div>
         </div>
       `;
-      
+
       itemsContainer.appendChild(row);
     });
 
@@ -141,7 +148,8 @@
     // Actualizar UI
     subtotalEl.textContent = formatPrice(subtotal);
     if (shippingEl) {
-      shippingEl.textContent = shipping === 0 ? "Gratis" : formatPrice(shipping);
+      shippingEl.textContent =
+        shipping === 0 ? "Gratis" : formatPrice(shipping);
     }
     totalEl.textContent = formatPrice(total);
 
@@ -151,20 +159,22 @@
   //  MOSTRAR/OCULTAR CAMPOS DE TARJETA
   function updatePaymentFields() {
     if (!form || !cardFields) return;
-    
-    const method = form.querySelector('input[name="payment-method"]:checked')?.value;
-    
+
+    const method = form.querySelector(
+      'input[name="payment-method"]:checked'
+    )?.value;
+
     if (method === "card") {
       cardFields.style.display = "block";
       // Hacer campos de tarjeta requeridos
-      cardFields.querySelectorAll('input').forEach(input => {
-        input.setAttribute('required', 'required');
+      cardFields.querySelectorAll("input").forEach((input) => {
+        input.setAttribute("required", "required");
       });
     } else {
       cardFields.style.display = "none";
       // Remover requerido de campos de tarjeta
-      cardFields.querySelectorAll('input').forEach(input => {
-        input.removeAttribute('required');
+      cardFields.querySelectorAll("input").forEach((input) => {
+        input.removeAttribute("required");
       });
     }
   }
@@ -174,10 +184,15 @@
     const name = document.getElementById("billing-name")?.value.trim();
     const phone = document.getElementById("billing-phone")?.value.trim();
     const address = document.getElementById("billing-address")?.value.trim();
-    const method = form.querySelector('input[name="payment-method"]:checked')?.value;
+    const method = form.querySelector(
+      'input[name="payment-method"]:checked'
+    )?.value;
 
     if (!name || !phone || !address) {
-      showNotification("Por favor completa todos los campos obligatorios", "error");
+      showNotification(
+        "Por favor completa todos los campos obligatorios",
+        "error"
+      );
       return false;
     }
 
@@ -189,17 +204,25 @@
 
     // Si es pago con tarjeta, validar campos de tarjeta
     if (method === "card") {
-      const cardNumber = document.getElementById("card-number")?.value.replace(/\s+/g, "");
+      const cardNumber = document
+        .getElementById("card-number")
+        ?.value.replace(/\s+/g, "");
       const cardExp = document.getElementById("card-exp")?.value;
       const cardCvc = document.getElementById("card-cvc")?.value;
 
       if (!cardNumber || cardNumber.length < 13) {
-        showNotification("Por favor ingresa un número de tarjeta válido", "error");
+        showNotification(
+          "Por favor ingresa un número de tarjeta válido",
+          "error"
+        );
         return false;
       }
 
       if (!cardExp || !cardExp.match(/^\d{2}\/\d{2}$/)) {
-        showNotification("Por favor ingresa una fecha de expiración válida (MM/AA)", "error");
+        showNotification(
+          "Por favor ingresa una fecha de expiración válida (MM/AA)",
+          "error"
+        );
         return false;
       }
 
@@ -212,7 +235,7 @@
     return true;
   }
 
-  //  PROCESAR PAGO
+  //  PROCESAR PAGO - FUNCIÓN MODIFICADA
   async function processPay() {
     if (!validateForm()) return;
     if (!cart.length) {
@@ -224,24 +247,64 @@
     const name = document.getElementById("billing-name")?.value.trim();
     const phone = document.getElementById("billing-phone")?.value.trim();
     const address = document.getElementById("billing-address")?.value.trim();
-    const method = form.querySelector('input[name="payment-method"]:checked')?.value || "card";
+    const method =
+      form.querySelector('input[name="payment-method"]:checked')?.value ||
+      "card";
 
     // CORRECCIÓN: Mapear "nequi" a "other" que es aceptado por el backend
     let backendMethod = method;
     if (method === "nequi") {
-      backendMethod = "other"; // El backend acepta: 'card', 'cash', 'transfer', 'pse', 'other'
+      backendMethod = "other";
     }
 
-    // Construir productos para el backend
-    const products = cart.map(item => ({
-      id: item.id,
-      title: item.title,
-      qty: item.qty || 1,
-      price: Number(item.price || 0),
-      image: item.image || ""
-    }));
+    // =====================================================
+    //  CRÍTICO: ASEGURAR QUE LAS IMÁGENES SE INCLUYAN
+    // =====================================================
+    console.log("🛒 Carrito original:", cart);
 
-    const subtotal = products.reduce((sum, p) => sum + (p.price * p.qty), 0);
+    const products = cart.map((item) => {
+      // Normalizar la ruta de la imagen para guardarla correctamente
+      let imagePath = item.image || "";
+
+      // Si la imagen ya tiene una ruta válida, usarla
+      if (imagePath) {
+        // Remover ../  para guardar ruta relativa limpia
+        if (imagePath.startsWith("../")) {
+          imagePath = imagePath.substring(3); // Remueve ../ para guardar "images/m3.png"
+        }
+        // Si ya empieza con images/, dejarla así
+        else if (imagePath.startsWith("images/")) {
+          // Ya está bien
+        }
+        // Si empieza con src/images/, remover src/
+        else if (imagePath.startsWith("src/images/")) {
+          imagePath = imagePath.substring(4); // Remueve src/ para dejar "images/m3.png"
+        }
+        // Si es solo el nombre del archivo, agregar images/
+        else if (!imagePath.includes("/")) {
+          imagePath = "images/" + imagePath;
+        }
+      } else {
+        // Si no hay imagen, usar placeholder
+        imagePath = "images/placeholder.png";
+      }
+
+      console.log(`📸 Producto: ${item.title}`);
+      console.log(`   - Imagen original: "${item.image}"`);
+      console.log(`   - Imagen normalizada: "${imagePath}"`);
+
+      return {
+        id: item.id,
+        title: item.title,
+        qty: item.qty || 1,
+        price: Number(item.price || 0),
+        image: imagePath, // ← GUARDAMOS LA RUTA NORMALIZADA
+      };
+    });
+
+    console.log("📦 Productos a enviar:", products);
+
+    const subtotal = products.reduce((sum, p) => sum + p.price * p.qty, 0);
     const envio = subtotal > 100000 ? 0 : 5000;
     const total = subtotal + envio;
 
@@ -260,23 +323,29 @@
       usuarioData: {
         nombre: usuario?.nombre || name,
         correo: usuario?.correo || "",
-        telefono: usuario?.telefono || phone
+        telefono: usuario?.telefono || phone,
       },
-      billing: { 
-        name, 
-        phone, 
+      billing: {
+        name,
+        phone,
         address,
         city: "",
-        department: ""
+        department: "",
       },
       payment: {
-        method: backendMethod, // Usar el método mapeado
-        card: method === "card" ? {
-          number: document.getElementById("card-number")?.value.replace(/\s+/g, "") || null,
-          exp: document.getElementById("card-exp")?.value || null,
-          cvc: document.getElementById("card-cvc")?.value || null,
-          holder: document.getElementById("card-name")?.value || name
-        } : null
+        method: backendMethod,
+        card:
+          method === "card"
+            ? {
+                number:
+                  document
+                    .getElementById("card-number")
+                    ?.value.replace(/\s+/g, "") || null,
+                exp: document.getElementById("card-exp")?.value || null,
+                cvc: document.getElementById("card-cvc")?.value || null,
+                holder: document.getElementById("card-name")?.value || name,
+              }
+            : null,
       },
       products,
       subtotal,
@@ -284,9 +353,11 @@
       total,
       meta: {
         from: window.location.pathname,
-        ts: Date.now()
-      }
+        ts: Date.now(),
+      },
     };
+
+    console.log("📤 Payload completo:", JSON.stringify(payload, null, 2));
 
     // Deshabilitar botón mientras procesa
     if (btnPay) {
@@ -305,39 +376,46 @@
       const response = await fetch("http://localhost:8081/api/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
+        body: JSON.stringify(payload),
       });
 
       const data = await response.json().catch(() => ({}));
 
       if (response.ok) {
         // Pago exitoso
-        showNotification("¡Pago procesado correctamente! Gracias por tu compra 🎉", "success");
+        showNotification(
+          "¡Pago procesado correctamente! Gracias por tu compra 🎉",
+          "success"
+        );
 
         // Limpiar carrito
         writeCartLocal([]);
 
         // Actualizar contador del carrito en el header
-        const cartCounter = document.getElementById('cart-counter');
+        const cartCounter = document.getElementById("cart-counter");
         if (cartCounter) {
-          cartCounter.style.display = 'none';
+          cartCounter.style.display = "none";
         }
 
         // Redirigir a página de confirmación
         setTimeout(() => {
           const orderId = data.orderId || "ORDER-" + Date.now();
-          window.location.href = `./confirmacion.html?order=${encodeURIComponent(orderId)}`;
+          window.location.href = `./confirmacion.html?order=${encodeURIComponent(
+            orderId
+          )}`;
         }, 1500);
-
       } else {
         // Error en el pago
-        const msg = data?.message || `Error procesando pago (${response.status})`;
+        const msg =
+          data?.message || `Error procesando pago (${response.status})`;
         showNotification(msg, "error");
       }
-
     } catch (err) {
       console.error("Error al comunicarse con el backend:", err);
-      showNotification("No se pudo conectar con el servidor. Por favor intenta nuevamente.", "error");
+      showNotification(
+        "No se pudo conectar con el servidor. Por favor intenta nuevamente.",
+        "error"
+      );
     } finally {
       // Restaurar botón
       if (btnPay) {
@@ -408,6 +486,39 @@
     });
   }
 
-  console.log("✅ Checkout inicializado correctamente");
+  //  FUNCIÓN ADICIONAL: VERIFICAR CARRITO AL CARGAR
+  function verificarImagenesEnCarrito() {
+    console.log("🔍 Verificando imágenes en el carrito...");
 
+    let carritoModificado = false;
+    const cartActualizado = cart.map((item) => {
+      if (!item.image || item.image === "") {
+        console.warn(`⚠️ Producto sin imagen: ${item.title} (${item.id})`);
+
+        // Intentar recuperar la imagen de window.PRODUCTS si existe
+        if (window.PRODUCTS && Array.isArray(window.PRODUCTS)) {
+          const productoOriginal = window.PRODUCTS.find((p) => p.id == item.id);
+          if (productoOriginal && productoOriginal.image) {
+            console.log(
+              `✅ Imagen recuperada desde PRODUCTS: ${productoOriginal.image}`
+            );
+            item.image = productoOriginal.image;
+            carritoModificado = true;
+          }
+        }
+      }
+      return item;
+    });
+
+    // Si se modificó el carrito, guardarlo
+    if (carritoModificado) {
+      console.log("💾 Actualizando carrito con imágenes corregidas...");
+      writeCartLocal(cartActualizado);
+    }
+  }
+
+  // Llamar esta función al cargar checkout
+  verificarImagenesEnCarrito();
+
+  console.log("✅ Checkout inicializado correctamente");
 })();

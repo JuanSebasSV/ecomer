@@ -1,5 +1,4 @@
 // ecomer/src/js/recover.js
-// RECUPERAR CONTRASEÑA - Solicitar email y redirigir a verificar código
 
 (function initRecover() {
   const form = document.getElementById("recover-form");

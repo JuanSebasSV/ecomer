@@ -333,34 +333,90 @@ document.addEventListener("click", (e) => {
   const addBtn = e.target.closest(".add-to-cart-btn");
   const detailsBtn = e.target.closest(".ver-detalles-btn");
 
-  // BOTÓN COMPRAR (visual + persistencia)
+  // BOTÓN COMPRAR - VERSIÓN CORREGIDA CON IMAGEN GARANTIZADA
   if (addBtn) {
-    // intenta leer id/title/price/image defensivamente
-    const id = addBtn.dataset.id || addBtn.dataset.productId || addBtn.dataset.product;
-    const title = addBtn.dataset.product || addBtn.dataset.id || 'Producto';
-    const price = Number(addBtn.dataset.price) || 0;
-    const image = addBtn.closest('.product-card')?.querySelector('img')?.src || '';
+    const productCard = addBtn.closest(".product-card");
+    const id =
+      addBtn.dataset.id || addBtn.dataset.productId || addBtn.dataset.product;
+    const title = addBtn.dataset.product || addBtn.dataset.id || "Producto";
+    const price = Number(addBtn.dataset.price || 0);
 
-    // leer carrito desde localStorage y persistir (se usan funciones definidas abajo)
-    const cart = readCartLocal();
-    const idx = cart.findIndex(i => i.id === id);
-    if (idx === -1) {
-      cart.push({ id, title, price, qty: 1, image });
-    } else {
-      cart[idx].qty = (cart[idx].qty || 0) + 1;
+    // CRÍTICO: Obtener la imagen correctamente con múltiples fallbacks
+    let image = "";
+
+    // Método 1: Desde el img dentro de la tarjeta
+    const imgElement = productCard?.querySelector("img");
+    if (imgElement) {
+      image = imgElement.getAttribute("src") || imgElement.src;
+      console.log(`📸 Imagen desde elemento <img>: ${image}`);
     }
+
+    // Método 2: Desde el dataset (si lo tienes)
+    if (!image && addBtn.dataset.image) {
+      image = addBtn.dataset.image;
+      console.log(`📸 Imagen desde dataset: ${image}`);
+    }
+
+    // Método 3: Buscar en el array de productos global
+    if (!image && window.PRODUCTS && Array.isArray(window.PRODUCTS)) {
+      const product = window.PRODUCTS.find((p) => p.id == id);
+      if (product && product.image) {
+        image = product.image;
+        console.log(`📸 Imagen desde PRODUCTS global: ${image}`);
+      }
+    }
+
+    // Fallback: placeholder
+    if (!image) {
+      image = "../images/placeholder.png";
+      console.log(`⚠️ No se encontró imagen, usando placeholder`);
+    }
+
+    console.log(`🛒 Agregando al carrito:`, {
+      id,
+      title,
+      price,
+      image,
+      qty: 1,
+    });
+
+    // Leer carrito desde localStorage
+    const cart = readCartLocal();
+    const idx = cart.findIndex((i) => i.id === id);
+
+    if (idx === -1) {
+      // Agregar nuevo producto
+      cart.push({
+        id,
+        title,
+        price,
+        qty: 1,
+        image, // ← ASEGURAR QUE LA IMAGEN SE GUARDE
+      });
+    } else {
+      // Incrementar cantidad
+      cart[idx].qty = (cart[idx].qty || 0) + 1;
+      // IMPORTANTE: Actualizar imagen por si no la tenía
+      if (!cart[idx].image) {
+        cart[idx].image = image;
+      }
+    }
+
     writeCartLocal(cart);
 
-    // actualizar contador visual
-    const counterEl = document.getElementById('cart-counter');
+    // Actualizar contador visual
+    const counterEl = document.getElementById("cart-counter");
     if (counterEl) {
-      const total = cart.reduce((s,i)=> s + (i.qty||0), 0);
-      counterEl.style.display = total > 0 ? 'flex' : 'none';
+      const total = cart.reduce((s, i) => s + (i.qty || 0), 0);
+      counterEl.style.display = total > 0 ? "flex" : "none";
       counterEl.textContent = total;
     }
 
-    // notificación
-    showNotification(`Tu producto "${title}" ha sido añadido al carrito 🛒`, "success");
+    // Notificación
+    showNotification(
+      `Tu producto "${title}" ha sido añadido al carrito 🛒`,
+      "success"
+    );
   }
 
   // BOTÓN DETALLES (reemplaza alert con notificación)

@@ -1,5 +1,5 @@
 // ecomer/src/js/pedidos.js
-// PÁGINA DE PEDIDOS DEL USUARIO
+// PÁGINA DE PEDIDOS DEL USUARIO - VERSIÓN COMPLETA CORREGIDA
 
 (function initPedidos() {
   const API_BASE = "http://localhost:8081/api/checkout";
@@ -9,6 +9,56 @@
   const noSession = document.getElementById("no-session");
   const noOrders = document.getElementById("no-orders");
   const ordersContainer = document.getElementById("orders-container");
+
+  // =====================================================
+  //  FUNCIÓN HELPER PARA NORMALIZAR RUTAS DE IMAGEN
+  // =====================================================
+  function normalizeImagePath(imagePath) {
+    console.log('🖼️ Ruta original recibida:', imagePath);
+    
+    if (!imagePath) {
+      console.log('⚠️ No hay imagen, usando placeholder');
+      return '../images/placeholder.png';
+    }
+    
+    // Si ya es una URL completa, devolverla tal cual
+    if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
+      console.log('✅ URL completa detectada');
+      return imagePath;
+    }
+    
+    // Si es una ruta relativa que empieza con ../ o ./, devolverla tal cual
+    if (imagePath.startsWith('../') || imagePath.startsWith('./')) {
+      console.log('✅ Ruta relativa correcta detectada');
+      return imagePath;
+    }
+    
+    // Si empieza con src/, necesita retroceder un nivel más
+    if (imagePath.startsWith('src/')) {
+      const normalizedPath = '../' + imagePath;
+      console.log('🔧 Convertida de src/ a:', normalizedPath);
+      return normalizedPath;
+    }
+    
+    // Si es solo el nombre del archivo o empieza con images/, normalizarla
+    if (imagePath.startsWith('images/')) {
+      const normalizedPath = '../' + imagePath;
+      console.log('🔧 Agregado ../ a images/:', normalizedPath);
+      return normalizedPath;
+    }
+    
+    // Si es solo el nombre del archivo, agregar la ruta completa
+    if (!imagePath.includes('/')) {
+      const normalizedPath = '../images/' + imagePath;
+      console.log('🔧 Nombre de archivo solo, ruta completa:', normalizedPath);
+      return normalizedPath;
+    }
+    
+    // Por defecto, asumir que necesita ../ al inicio
+    const normalizedPath = '../' + imagePath;
+    console.log('🔧 Caso por defecto, agregado ../:', normalizedPath);
+    return normalizedPath;
+  }
 
   // =====================================================
   //  VERIFICAR SESIÓN
@@ -85,10 +135,28 @@
   function renderizarPedidos(ordenes) {
     ordersContainer.innerHTML = "";
     
+    // Obtener lista de pedidos ocultos
+    const HIDDEN_ORDERS_KEY = 'techstore_hidden_orders';
+    const hiddenOrders = JSON.parse(localStorage.getItem(HIDDEN_ORDERS_KEY) || '[]');
+    
+    console.log(`🔍 Pedidos ocultos: ${hiddenOrders.length}`);
+    
+    // Filtrar pedidos ocultos
+    const ordenesVisibles = ordenes.filter(orden => !hiddenOrders.includes(orden.orderId));
+    
+    console.log(`✅ Pedidos visibles: ${ordenesVisibles.length} de ${ordenes.length}`);
+    
+    // Si no hay pedidos visibles, mostrar mensaje
+    if (ordenesVisibles.length === 0) {
+      if (noOrders) noOrders.classList.remove("hidden");
+      if (ordersContainer) ordersContainer.classList.add("hidden");
+      return;
+    }
+    
     // Guardar órdenes globalmente para acceso desde funciones
-    window.currentOrders = ordenes;
+    window.currentOrders = ordenesVisibles;
 
-    ordenes.forEach(orden => {
+    ordenesVisibles.forEach(orden => {
       const card = crearTarjetaPedido(orden);
       ordersContainer.appendChild(card);
     });
@@ -182,10 +250,10 @@
                   ${orden.products.map((p, idx) => `
                     <div class="flex-shrink-0 w-20 h-20 relative group cursor-pointer" onclick="showProductDetail('${orden.orderId}', ${idx})">
                       <img 
-                        src="${p.image}" 
+                        src="${normalizeImagePath(p.image)}" 
                         class="w-full h-full object-cover rounded-md border border-gray-300 dark:border-gray-600 group-hover:border-blue-500 transition-all shadow-sm" 
                         alt="${p.title}" 
-                        onerror="this.onerror=null; this.src='https://via.placeholder.com/80?text=Sin+Imagen'"
+                        onerror="this.onerror=null; this.src='../images/placeholder.png'"
                         title="${p.title}"
                       >
                       <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all rounded-md"></div>
@@ -202,10 +270,10 @@
             <div class="mb-4 inline-block">
               <div class="w-20 h-20 relative">
                 <img 
-                  src="${orden.products[0].image}" 
+                  src="${normalizeImagePath(orden.products[0].image)}" 
                   class="w-full h-full object-cover rounded-md border border-gray-300 dark:border-gray-600 shadow-sm" 
                   alt="${orden.products[0].title}"
-                  onerror="this.onerror=null; this.src='https://via.placeholder.com/80?text=Sin+Imagen'"
+                  onerror="this.onerror=null; this.src='../images/placeholder.png'"
                 >
               </div>
             </div>
@@ -286,6 +354,14 @@
               Cancelar
             </button>
           ` : ''}
+          ${orden.status === 'cancelled' ? `
+            <button onclick="eliminarPedidoDelHistorial('${orden.orderId}')" class="py-2 px-4 bg-gray-600 dark:bg-gray-700 text-white rounded-lg hover:bg-gray-700 dark:hover:bg-gray-600 transition text-sm font-medium flex items-center gap-2" title="Eliminar del historial">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+              </svg>
+              Eliminar
+            </button>
+          ` : ''}
         </div>
       </div>
     `;
@@ -331,7 +407,7 @@
           
           <div class="mb-6">
             <img 
-              src="${product.image || '../images/placeholder.png'}" 
+              src="${normalizeImagePath(product.image)}" 
               alt="${product.title}"
               class="w-full h-80 object-cover rounded-lg"
               onerror="this.src='../images/placeholder.png'"
@@ -402,6 +478,108 @@
       console.error("Error:", error);
       if (window.showNotification) {
         window.showNotification("No se pudo cancelar el pedido", "error");
+      }
+    }
+  };
+
+  // Eliminar pedido del historial (solo localmente, no del servidor)
+  window.eliminarPedidoDelHistorial = function(orderId) {
+    // Crear modal de confirmación personalizado
+    const modal = document.createElement('div');
+    modal.className = 'fixed inset-0 bg-black bg-opacity-50 z-[9999] flex items-center justify-center p-4';
+    
+    modal.innerHTML = `
+      <div class="bg-white dark:bg-gray-900 rounded-2xl max-w-md w-full shadow-2xl">
+        <div class="p-6">
+          <div class="flex items-center gap-4 mb-4">
+            <div class="w-12 h-12 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center flex-shrink-0">
+              <svg class="w-6 h-6 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+              </svg>
+            </div>
+            <div class="flex-1">
+              <h3 class="text-xl font-bold text-gray-900 dark:text-gray-100">Eliminar del historial</h3>
+              <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Esta acción no se puede deshacer</p>
+            </div>
+          </div>
+          
+          <p class="text-gray-700 dark:text-gray-300 mb-6">
+            ¿Estás seguro de que deseas eliminar el pedido <strong>${orderId}</strong> de tu historial?
+          </p>
+          
+          <div class="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-3 mb-6">
+            <div class="flex gap-2">
+              <svg class="w-5 h-5 text-yellow-600 dark:text-yellow-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+              </svg>
+              <p class="text-sm text-yellow-800 dark:text-yellow-300">
+                <strong>Nota:</strong> Solo se eliminará de tu vista local. El pedido seguirá registrado en el sistema.
+              </p>
+            </div>
+          </div>
+          
+          <div class="flex gap-3">
+            <button 
+              onclick="this.closest('.fixed').remove()"
+              class="flex-1 py-3 bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition font-semibold"
+            >
+              Cancelar
+            </button>
+            <button 
+              onclick="confirmarEliminacion('${orderId}'); this.closest('.fixed').remove();"
+              class="flex-1 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition font-semibold"
+            >
+              Eliminar
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+    
+    document.body.appendChild(modal);
+  };
+
+  // Función global para confirmar eliminación
+  window.confirmarEliminacion = function(orderId) {
+    try {
+      // Obtener lista de pedidos ocultos del localStorage
+      const HIDDEN_ORDERS_KEY = 'techstore_hidden_orders';
+      let hiddenOrders = JSON.parse(localStorage.getItem(HIDDEN_ORDERS_KEY) || '[]');
+      
+      // Agregar el orderId a la lista de ocultos
+      if (!hiddenOrders.includes(orderId)) {
+        hiddenOrders.push(orderId);
+        localStorage.setItem(HIDDEN_ORDERS_KEY, JSON.stringify(hiddenOrders));
+      }
+      
+      // Eliminar visualmente el pedido
+      const pedidoElement = document.querySelector(`[id*="${orderId}"]`)?.closest('.bg-white, .dark\\:bg-gray-900');
+      if (pedidoElement) {
+        pedidoElement.style.transition = 'all 0.3s ease';
+        pedidoElement.style.opacity = '0';
+        pedidoElement.style.transform = 'scale(0.95)';
+        
+        setTimeout(() => {
+          pedidoElement.remove();
+          
+          // Verificar si ya no hay más pedidos visibles
+          const remainingOrders = document.querySelectorAll('#orders-container > div');
+          if (remainingOrders.length === 0) {
+            if (noOrders) noOrders.classList.remove("hidden");
+            if (ordersContainer) ordersContainer.classList.add("hidden");
+          }
+        }, 300);
+      }
+      
+      if (window.showNotification) {
+        window.showNotification("Pedido eliminado del historial", "success");
+      }
+      
+      console.log(`🗑️ Pedido ${orderId} oculto del historial`);
+    } catch (error) {
+      console.error("Error al eliminar pedido del historial:", error);
+      if (window.showNotification) {
+        window.showNotification("Error al eliminar el pedido", "error");
       }
     }
   };
