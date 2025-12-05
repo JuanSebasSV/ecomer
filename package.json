@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "dev": "npx tailwindcss -i ./src/style/input.css -o ./src/output.css --watch",
+    "dev": "npx tailwindcss -i ./src/style/input.css -o ./src/style/output.css --watch",
+    "build": "npx update-browserslist-db@latest && tailwindcss -i ./src/style/input.css -o ./src/output.css --minify",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
