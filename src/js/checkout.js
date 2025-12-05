@@ -1,5 +1,3 @@
-//  CHECKOUT PAGE
-
 (function setupCheckoutPage() {
   // Solo ejecutar si estamos en la página de checkout
   if (!window.location.pathname.includes("checkout.html")) return;
@@ -13,6 +11,59 @@
   const btnPay = document.getElementById("btn-pay");
   const btnCancel = document.getElementById("btn-cancel");
   const cardFields = document.getElementById("card-fields");
+
+  // Elementos de ubicación
+  const departmentSelect = document.getElementById("billing-department");
+  const citySelect = document.getElementById("billing-city");
+
+  //  INICIALIZAR SELECTS DE UBICACIÓN
+  function initializeLocationSelects() {
+    // Verificar que COLOMBIA_DATA esté disponible
+    if (typeof COLOMBIA_DATA === 'undefined') {
+      console.error('❌ COLOMBIA_DATA no está disponible. Asegúrate de cargar colombiaCities.js');
+      return;
+    }
+
+    console.log('🌎 Inicializando selects de ubicación de Colombia');
+
+    // Poblar departamentos
+    if (departmentSelect) {
+      const departments = Object.keys(COLOMBIA_DATA).sort();
+      
+      departments.forEach(dept => {
+        const option = document.createElement('option');
+        option.value = dept;
+        option.textContent = dept;
+        departmentSelect.appendChild(option);
+      });
+
+      console.log(`✅ ${departments.length} departamentos cargados`);
+
+      // Listener para cambio de departamento
+      departmentSelect.addEventListener('change', (e) => {
+        const selectedDept = e.target.value;
+        
+        // Limpiar y habilitar select de ciudades
+        citySelect.innerHTML = '<option value="">Selecciona municipio...</option>';
+        
+        if (selectedDept && COLOMBIA_DATA[selectedDept]) {
+          const cities = COLOMBIA_DATA[selectedDept].sort();
+          
+          cities.forEach(city => {
+            const option = document.createElement('option');
+            option.value = city;
+            option.textContent = city;
+            citySelect.appendChild(option);
+          });
+          
+          citySelect.disabled = false;
+          console.log(`📍 ${cities.length} municipios cargados para ${selectedDept}`);
+        } else {
+          citySelect.disabled = true;
+        }
+      });
+    }
+  }
 
   //  FUNCIONES AUXILIARES
 
@@ -183,12 +234,15 @@
   function validateForm() {
     const name = document.getElementById("billing-name")?.value.trim();
     const phone = document.getElementById("billing-phone")?.value.trim();
+    const department = document.getElementById("billing-department")?.value.trim();
+    const city = document.getElementById("billing-city")?.value.trim();
+    const neighborhood = document.getElementById("billing-neighborhood")?.value.trim();
     const address = document.getElementById("billing-address")?.value.trim();
     const method = form.querySelector(
       'input[name="payment-method"]:checked'
     )?.value;
 
-    if (!name || !phone || !address) {
+    if (!name || !phone || !department || !city || !neighborhood || !address) {
       showNotification(
         "Por favor completa todos los campos obligatorios",
         "error"
@@ -246,7 +300,11 @@
     // Obtener datos del formulario
     const name = document.getElementById("billing-name")?.value.trim();
     const phone = document.getElementById("billing-phone")?.value.trim();
+    const department = document.getElementById("billing-department")?.value.trim();
+    const city = document.getElementById("billing-city")?.value.trim();
+    const neighborhood = document.getElementById("billing-neighborhood")?.value.trim();
     const address = document.getElementById("billing-address")?.value.trim();
+    const notes = document.getElementById("billing-notes")?.value.trim() || "";
     const method =
       form.querySelector('input[name="payment-method"]:checked')?.value ||
       "card";
@@ -329,8 +387,10 @@
         name,
         phone,
         address,
-        city: "",
-        department: "",
+        city,
+        department,
+        neighborhood,
+        notes
       },
       payment: {
         method: backendMethod,
@@ -428,6 +488,9 @@
 
   //  EVENTOS
 
+  // Inicializar selects de ubicación
+  initializeLocationSelects();
+
   // Renderizar items al cargar
   renderCheckoutItems();
 
@@ -520,5 +583,5 @@
   // Llamar esta función al cargar checkout
   verificarImagenesEnCarrito();
 
-  console.log("✅ Checkout inicializado correctamente");
+  console.log("✅ Checkout inicializado correctamente con ubicación de Colombia");
 })();

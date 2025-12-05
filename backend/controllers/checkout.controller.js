@@ -1,4 +1,3 @@
-// backend/controllers/checkout.controller.js
 import Order from "../models/order.models.js";
 import Counter from "../models/counter.models.js";
 import Usuario from "../models/user.models.js";
@@ -49,10 +48,19 @@ export const procesarCheckout = async (req, res) => {
     // =====================================================
     
     if (!billing?.name || !billing?.phone || !billing?.address) {
-      console.error("❌ Faltan datos de facturación");
+      console.error("❌ Faltan datos de facturación básicos");
       return res.status(400).json({
         success: false,
         message: "Faltan datos de facturación obligatorios (nombre, teléfono, dirección)"
+      });
+    }
+
+    // VALIDACIÓN NUEVA: Departamento, ciudad y barrio
+    if (!billing?.department || !billing?.city || !billing?.neighborhood) {
+      console.error("❌ Faltan datos de ubicación");
+      return res.status(400).json({
+        success: false,
+        message: "Faltan datos de ubicación obligatorios (departamento, ciudad, barrio)"
       });
     }
 
@@ -177,8 +185,10 @@ export const procesarCheckout = async (req, res) => {
         name: billing.name,
         phone: billing.phone,
         address: billing.address,
-        city: billing.city || "",
-        department: billing.department || ""
+        city: billing.city,
+        department: billing.department,
+        neighborhood: billing.neighborhood || "",
+        notes: billing.notes || ""
       },
       payment: {
         method: payment.method,
@@ -211,10 +221,14 @@ export const procesarCheckout = async (req, res) => {
     console.log(`✅ ¡Orden guardada exitosamente! ID: ${orderId}`);
     console.log(`   - Usuario: ${nuevaOrden.usuarioData.nombre}`);
     console.log(`   - UsuarioId guardado: ${userIdFinal || 'invitado'}`);
+    console.log(`   - Ubicación: ${billing.neighborhood}, ${billing.city}, ${billing.department}`);
     console.log(`   - Total: ${total.toLocaleString('es-CO')}`);
     console.log(`   - Productos: ${products.length}`);
     console.log(`   - Método de pago: ${payment.method}`);
     console.log(`   - Estado: ${paymentStatus}`);
+    if (billing.notes) {
+      console.log(`   - Notas de entrega: ${billing.notes}`);
+    }
 
     // =====================================================
     //  RESPUESTA EXITOSA
@@ -231,7 +245,8 @@ export const procesarCheckout = async (req, res) => {
         status: nuevaOrden.status,
         paymentStatus: nuevaOrden.payment.status,
         productos: nuevaOrden.products.length,
-        metodo: nuevaOrden.payment.method
+        metodo: nuevaOrden.payment.method,
+        ubicacion: `${billing.neighborhood}, ${billing.city}, ${billing.department}`
       }
     });
 
@@ -349,9 +364,13 @@ export const listarOrdenesUsuario = async (req, res) => {
  */
 export const listarTodasOrdenes = async (req, res) => {
   try {
-    const { limit = 50, skip = 0, status } = req.query;
+    const { limit = 50, skip = 0, status, department, city } = req.query;
     
-    const query = status ? { status } : {};
+    // Construir query con filtros opcionales
+    const query = {};
+    if (status) query.status = status;
+    if (department) query['billing.department'] = department;
+    if (city) query['billing.city'] = city;
     
     const ordenes = await Order.find(query)
       .sort({ createdAt: -1 })

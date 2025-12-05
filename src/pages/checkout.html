@@ -137,11 +137,51 @@
               </div>
             </fieldset>
 
-            <div>
-              <label for="billing-address" class="block text-sm font-medium mb-1">Dirección de envío</label>
-              <input id="billing-address" name="billing-address" type="text" required
-                class="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500">
-            </div>
+            <!-- NUEVA SECCIÓN: Ubicación -->
+            <fieldset class="space-y-4">
+              <legend class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-3">Ubicación de entrega</legend>
+              
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <label for="billing-department" class="block text-sm font-medium mb-1">Departamento</label>
+                  <select id="billing-department" name="billing-department" required
+                    class="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500">
+                    <option value="">Selecciona...</option>
+                  </select>
+                </div>
+                <div>
+                  <label for="billing-city" class="block text-sm font-medium mb-1">Municipio</label>
+                  <select id="billing-city" name="billing-city" required disabled
+                    class="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed">
+                    <option value="">Primero selecciona departamento</option>
+                  </select>
+                </div>
+                <div>
+                  <label for="billing-neighborhood" class="block text-sm font-medium mb-1">Barrio</label>
+                  <input id="billing-neighborhood" name="billing-neighborhood" type="text" required
+                    placeholder="Ej: Centro, La Victoria"
+                    class="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500">
+                </div>
+              </div>
+
+              <div>
+                <label for="billing-address" class="block text-sm font-medium mb-1">Dirección de envío</label>
+                <input id="billing-address" name="billing-address" type="text" required
+                  placeholder="Ej: Calle 123 # 45-67"
+                  class="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500">
+              </div>
+
+              <div>
+                <label for="billing-notes" class="block text-sm font-medium mb-1">
+                  Notas de entrega (opcional)
+                  <span class="text-xs text-gray-500 dark:text-gray-400 font-normal">- Detalles importantes para el domiciliario</span>
+                </label>
+                <textarea id="billing-notes" name="billing-notes" rows="3"
+                  placeholder="Ej: Conjunto residencial, portería principal. Casa color blanca. Timbre número 3."
+                  class="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 resize-none"></textarea>
+                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Incluye información útil como: conjunto residencial, color de casa, punto de referencia, etc.</p>
+              </div>
+            </fieldset>
 
             <div>
               <p class="text-sm font-medium mb-2">Método de pago</p>
@@ -235,7 +275,9 @@
   <footer class="py-8 text-center bg-white dark:bg-gray-800 border-t border-gray-300 dark:border-gray-700">
     <p class="text-gray-600 dark:text-gray-300">© 2025 TechStore Pro. Todos los derechos reservados.</p>
   </footer>
+  <script src="../js/colombiaCities.js" defer></script>
   <script src="../js/main.js" defer></script>
+  <script src="../js/colombiaCities.js" defer></script>
   <script src="../js/checkout.js" defer></script>
   <script src="../js/notification.js" defer></script>
 </body>

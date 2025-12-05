@@ -1,5 +1,4 @@
-// confirmacion.js
-// PÁGINA DE CONFIRMACIÓN DE PEDIDO - VERSIÓN CORREGIDA CON IMÁGENES
+// PÁGINA DE CONFIRMACIÓN DE PEDIDO - CON CARRUSEL FUNCIONAL
 
 (function initConfirmacion() {
   const API_BASE = "http://localhost:8081/api/checkout";
@@ -20,40 +19,34 @@
       return '../images/placeholder.png';
     }
     
-    // Si ya es una URL completa, devolverla tal cual
     if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
       console.log('✅ URL completa detectada');
       return imagePath;
     }
     
-    // Si es una ruta relativa que empieza con ../ o ./, devolverla tal cual
     if (imagePath.startsWith('../') || imagePath.startsWith('./')) {
       console.log('✅ Ruta relativa correcta detectada');
       return imagePath;
     }
     
-    // Si empieza con src/, necesita retroceder un nivel más
     if (imagePath.startsWith('src/')) {
       const normalizedPath = '../' + imagePath;
       console.log('🔧 Convertida de src/ a:', normalizedPath);
       return normalizedPath;
     }
     
-    // Si es solo el nombre del archivo o empieza con images/, normalizarla
     if (imagePath.startsWith('images/')) {
       const normalizedPath = '../' + imagePath;
       console.log('🔧 Agregado ../ a images/:', normalizedPath);
       return normalizedPath;
     }
     
-    // Si es solo el nombre del archivo, agregar la ruta completa
     if (!imagePath.includes('/')) {
       const normalizedPath = '../images/' + imagePath;
       console.log('🔧 Nombre de archivo solo, ruta completa:', normalizedPath);
       return normalizedPath;
     }
     
-    // Por defecto, asumir que necesita ../ al inicio
     const normalizedPath = '../' + imagePath;
     console.log('🔧 Caso por defecto, agregado ../:', normalizedPath);
     return normalizedPath;
@@ -112,7 +105,6 @@
 
       console.log("✅ Pedido cargado:", orden);
 
-      // Mostrar contenido de confirmación
       if (confirmationContent) {
         confirmationContent.classList.remove("hidden");
         renderizarDetalles(orden);
@@ -144,85 +136,132 @@
     // Productos con carrusel
     const productsContainer = document.getElementById("order-products");
     if (productsContainer) {
-      let html = '';
+      // Limpiar contenedor
+      productsContainer.innerHTML = '';
       
       // Si hay múltiples productos, mostrar carrusel
       if (orden.products.length > 1) {
-        html += '<div class="relative mb-4">';
-        html += '<div class="overflow-hidden rounded-lg">';
-        html += '<div id="carousel-confirm" class="flex transition-transform duration-300 ease-in-out gap-3">';
+        const carouselWrapper = document.createElement('div');
+        carouselWrapper.className = 'relative mb-4';
         
+        const carouselContainer = document.createElement('div');
+        carouselContainer.className = 'overflow-hidden rounded-lg';
+        
+        const carousel = document.createElement('div');
+        carousel.id = 'carousel-confirm';
+        carousel.className = 'flex transition-transform duration-300 ease-in-out gap-3';
+        carousel.style.scrollBehavior = 'smooth';
+        carousel.style.overflowX = 'auto';
+        
+        // Agregar productos al carrusel
         orden.products.forEach((p, idx) => {
-          html += '<div class="flex-shrink-0 w-32 h-32 relative group">';
+          const productCard = document.createElement('div');
+          productCard.className = 'flex-shrink-0 w-32 h-32 relative group cursor-pointer';
           
-          // CRÍTICO: Normalizar la ruta de la imagen antes de usarla
           const normalizedImage = normalizeImagePath(p.image);
           console.log(`📸 Producto ${idx}: ${p.title}`);
           console.log(`   - Imagen original: "${p.image}"`);
           console.log(`   - Imagen normalizada: "${normalizedImage}"`);
           
-          html += `<img src="${normalizedImage}" class="w-full h-full object-cover rounded-lg border-2 border-gray-200 dark:border-gray-700 group-hover:border-blue-500 transition-all cursor-pointer" alt="${p.title}" onerror="this.src='../images/placeholder.png'" onclick="showProductDetailConfirm(${idx})">`;
-          html += '<div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-all rounded-lg"></div>';
-          html += `<div class="absolute bottom-1 right-1 bg-blue-600 text-white text-xs px-2 py-1 rounded-full font-semibold">×${p.qty}</div>`;
-          html += '</div>';
+          productCard.innerHTML = `
+            <img src="${normalizedImage}" 
+                 class="w-full h-full object-cover rounded-lg border-2 border-gray-200 dark:border-gray-700 group-hover:border-blue-500 transition-all cursor-pointer" 
+                 alt="${p.title}" 
+                 onerror="this.src='../images/placeholder.png'">
+            <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-all rounded-lg"></div>
+            <div class="absolute bottom-1 right-1 bg-blue-600 text-white text-xs px-2 py-1 rounded-full font-semibold">×${p.qty}</div>
+          `;
+          
+          // Agregar evento click
+          productCard.addEventListener('click', () => showProductDetailConfirm(idx));
+          
+          carousel.appendChild(productCard);
         });
         
-        html += '</div></div>';
+        carouselContainer.appendChild(carousel);
+        carouselWrapper.appendChild(carouselContainer);
         
-        // Botones de navegación si hay más de 4 productos
+        // Botones de navegación (solo si hay más de 4 productos)
         if (orden.products.length > 4) {
-          html += '<button onclick="scrollCarouselConfirm(-1)" class="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-2 bg-white dark:bg-gray-800 rounded-full p-2 shadow-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-all z-10 border border-gray-200 dark:border-gray-600" aria-label="Anterior">';
-          html += '<svg class="w-5 h-5 text-gray-700 dark:text-gray-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">';
-          html += '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg></button>';
+          const btnPrev = document.createElement('button');
+          btnPrev.className = 'absolute left-0 top-1/2 -translate-y-1/2 -translate-x-2 bg-white dark:bg-gray-800 rounded-full p-2 shadow-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-all z-10 border border-gray-200 dark:border-gray-600';
+          btnPrev.setAttribute('aria-label', 'Anterior');
+          btnPrev.innerHTML = `
+            <svg class="w-5 h-5 text-gray-700 dark:text-gray-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+            </svg>
+          `;
+          btnPrev.addEventListener('click', () => scrollCarouselConfirm(-1));
           
-          html += '<button onclick="scrollCarouselConfirm(1)" class="absolute right-0 top-1/2 -translate-y-1/2 translate-x-2 bg-white dark:bg-gray-800 rounded-full p-2 shadow-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-all z-10 border border-gray-200 dark:border-gray-600" aria-label="Siguiente">';
-          html += '<svg class="w-5 h-5 text-gray-700 dark:text-gray-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">';
-          html += '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg></button>';
+          const btnNext = document.createElement('button');
+          btnNext.className = 'absolute right-0 top-1/2 -translate-y-1/2 translate-x-2 bg-white dark:bg-gray-800 rounded-full p-2 shadow-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-all z-10 border border-gray-200 dark:border-gray-600';
+          btnNext.setAttribute('aria-label', 'Siguiente');
+          btnNext.innerHTML = `
+            <svg class="w-5 h-5 text-gray-700 dark:text-gray-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+            </svg>
+          `;
+          btnNext.addEventListener('click', () => scrollCarouselConfirm(1));
+          
+          carouselWrapper.appendChild(btnPrev);
+          carouselWrapper.appendChild(btnNext);
         }
         
-        html += '</div>';
-      } else {
-        // Un solo producto - imagen grande
-        const normalizedImage = normalizeImagePath(orden.products[0].image);
-        console.log(`📸 Producto único: ${orden.products[0].title}`);
-        console.log(`   - Imagen original: "${orden.products[0].image}"`);
-        console.log(`   - Imagen normalizada: "${normalizedImage}"`);
+        productsContainer.appendChild(carouselWrapper);
         
-        html += '<div class="mb-4">';
-        html += `<img src="${normalizedImage}" class="w-full h-48 object-cover rounded-lg border-2 border-gray-200 dark:border-gray-700" alt="${orden.products[0].title}" onerror="this.src='../images/placeholder.png'">`;
-        html += '</div>';
+      } else {
+        // Un solo producto
+        const singleProductDiv = document.createElement('div');
+        singleProductDiv.className = 'mb-4';
+        const normalizedImage = normalizeImagePath(orden.products[0].image);
+        singleProductDiv.innerHTML = `
+          <img src="${normalizedImage}" 
+               class="w-full h-48 object-cover rounded-lg border-2 border-gray-200 dark:border-gray-700" 
+               alt="${orden.products[0].title}" 
+               onerror="this.src='../images/placeholder.png'">
+        `;
+        productsContainer.appendChild(singleProductDiv);
       }
       
       // Lista de productos
-      html += '<div class="space-y-3">';
-      orden.products.forEach(p => {
-        html += '<div class="flex items-center gap-3 p-3 rounded-lg bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:border-blue-400 dark:hover:border-blue-600 transition-all">';
-        html += '<div class="flex-1">';
-        html += `<div class="font-medium text-gray-800 dark:text-gray-100">${p.title}</div>`;
-        html += `<div class="text-sm text-gray-600 dark:text-gray-400">Cantidad: ${p.qty} × ${formatPrice(p.price)}</div>`;
-        html += '</div>';
-        html += `<div class="font-bold text-gray-800 dark:text-gray-100">${formatPrice(p.price * p.qty)}</div>`;
-        html += '</div>';
-      });
-      html += '</div>';
+      const listDiv = document.createElement('div');
+      listDiv.className = 'space-y-3';
       
-      productsContainer.innerHTML = html;
+      orden.products.forEach(p => {
+        const productItem = document.createElement('div');
+        productItem.className = 'flex items-center gap-3 p-3 rounded-lg bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:border-blue-400 dark:hover:border-blue-600 transition-all';
+        productItem.innerHTML = `
+          <div class="flex-1">
+            <div class="font-medium text-gray-800 dark:text-gray-100">${p.title}</div>
+            <div class="text-sm text-gray-600 dark:text-gray-400">Cantidad: ${p.qty} × ${formatPrice(p.price)}</div>
+          </div>
+          <div class="font-bold text-gray-800 dark:text-gray-100">${formatPrice(p.price * p.qty)}</div>
+        `;
+        listDiv.appendChild(productItem);
+      });
+      
+      productsContainer.appendChild(listDiv);
     }
     
-    // Guardar orden globalmente para funciones
     window.currentOrder = orden;
 
     // Información de envío
     const shippingInfo = document.getElementById("shipping-info");
     if (shippingInfo) {
       let html = `<p><strong class="text-gray-900 dark:text-gray-100">${orden.billing.name}</strong></p>`;
-      html += `<p>${orden.billing.address}</p>`;
-      if (orden.billing.city) {
-        html += `<p>${orden.billing.city}`;
-        if (orden.billing.department) html += `, ${orden.billing.department}`;
-        html += '</p>';
+      html += `<p class="mt-2"><strong>Dirección:</strong> ${orden.billing.address}</p>`;
+      html += `<p><strong>Barrio:</strong> ${orden.billing.neighborhood || 'No especificado'}</p>`;
+      html += `<p><strong>Ciudad:</strong> ${orden.billing.city}</p>`;
+      html += `<p><strong>Departamento:</strong> ${orden.billing.department}</p>`;
+      html += `<p class="mt-2"><strong>Teléfono:</strong> ${orden.billing.phone}</p>`;
+      
+      if (orden.billing.notes && orden.billing.notes.trim()) {
+        html += `<div class="mt-3 p-3 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg">`;
+        html += `<p class="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-1">📝 Notas de entrega:</p>`;
+        html += `<p class="text-sm text-gray-700 dark:text-gray-300">${orden.billing.notes}</p>`;
+        html += `</div>`;
       }
-      html += `<p>Tel: ${orden.billing.phone}</p>`;
+      
       shippingInfo.innerHTML = html;
     }
 
@@ -269,32 +308,34 @@
   }
 
   // =====================================================
-  //  FUNCIONES GLOBALES
+  //  FUNCIONES DE CARRUSEL
   // =====================================================
   
-  // Scroll del carrusel
-  window.scrollCarouselConfirm = function(direction) {
+  function scrollCarouselConfirm(direction) {
     const carousel = document.getElementById('carousel-confirm');
-    if (!carousel) return;
+    if (!carousel) {
+      console.log('❌ Carrusel no encontrado');
+      return;
+    }
     
-    const scrollAmount = 140;
-    carousel.scrollBy({
-      left: direction * scrollAmount,
+    const scrollAmount = 140; // ancho de la tarjeta + gap
+    const newScrollPosition = carousel.scrollLeft + (direction * scrollAmount);
+    
+    console.log(`🎠 Deslizando carrusel: ${direction > 0 ? 'derecha' : 'izquierda'}`);
+    console.log(`   - Posición actual: ${carousel.scrollLeft}`);
+    console.log(`   - Nueva posición: ${newScrollPosition}`);
+    
+    carousel.scrollTo({
+      left: newScrollPosition,
       behavior: 'smooth'
     });
-  };
+  }
 
-  // Modal de detalle de producto
-  window.showProductDetailConfirm = function(productIndex) {
+  function showProductDetailConfirm(productIndex) {
     if (!window.currentOrder || !window.currentOrder.products[productIndex]) return;
     
     const product = window.currentOrder.products[productIndex];
-    
-    // CRÍTICO: Normalizar la imagen antes de mostrarla en el modal
     const normalizedImage = normalizeImagePath(product.image);
-    console.log(`🔍 Modal - Producto: ${product.title}`);
-    console.log(`   - Imagen original: "${product.image}"`);
-    console.log(`   - Imagen normalizada: "${normalizedImage}"`);
     
     const modal = document.createElement('div');
     modal.className = 'fixed inset-0 bg-black bg-opacity-50 z-[9999] flex items-center justify-center p-4';
@@ -308,7 +349,7 @@
       <div class="p-6">
         <div class="flex items-start justify-between mb-4">
           <h3 class="text-2xl font-bold text-gray-900 dark:text-gray-100">Detalle del Producto</h3>
-          <button onclick="this.closest('.fixed').remove()" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200">
+          <button class="close-modal text-gray-400 hover:text-gray-600 dark:hover:text-gray-200">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
             </svg>
@@ -348,17 +389,26 @@
         </div>
         
         <button 
-          onclick="this.closest('.fixed').remove()"
-          class="w-full mt-6 py-3 bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition font-semibold"
+          class="close-modal w-full mt-6 py-3 bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition font-semibold"
         >
           Cerrar
         </button>
       </div>
     `;
     
+    // Agregar eventos a los botones de cerrar
+    const closeButtons = modalContent.querySelectorAll('.close-modal');
+    closeButtons.forEach(btn => {
+      btn.addEventListener('click', () => modal.remove());
+    });
+    
     modal.appendChild(modalContent);
     document.body.appendChild(modal);
-  };
+  }
+
+  // Exponer funciones globalmente (para compatibilidad)
+  window.scrollCarouselConfirm = scrollCarouselConfirm;
+  window.showProductDetailConfirm = showProductDetailConfirm;
 
   // =====================================================
   //  INICIALIZAR
@@ -373,8 +423,6 @@
   }
 
   console.log(`🚀 Inicializando confirmación para pedido: ${orderId}`);
-
-  // Cargar detalles del pedido
   cargarDetallesPedido(orderId);
 
 })();

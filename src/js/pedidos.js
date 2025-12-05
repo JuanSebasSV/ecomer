@@ -297,7 +297,7 @@
           </div>
         </div>
 
-        <!-- Información de envío -->
+        <!-- Información de envío con ubicación completa -->
         <div class="mb-6 p-4 rounded-lg bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800">
           <h4 class="font-semibold text-gray-900 dark:text-gray-100 mb-2 flex items-center gap-2">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -309,8 +309,16 @@
           <p class="text-sm text-gray-700 dark:text-gray-300">
             <strong>${orden.billing.name}</strong><br>
             ${orden.billing.address}<br>
+            Barrio: ${orden.billing.neighborhood || 'No especificado'}<br>
+            ${orden.billing.city}, ${orden.billing.department}<br>
             Tel: ${orden.billing.phone}
           </p>
+          ${orden.billing.notes && orden.billing.notes.trim() ? `
+            <div class="mt-3 pt-3 border-t border-blue-200 dark:border-blue-700">
+              <p class="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">📝 Notas de entrega:</p>
+              <p class="text-xs text-gray-600 dark:text-gray-400 italic">"${orden.billing.notes}"</p>
+            </div>
+          ` : ''}
         </div>
 
         <!-- Método de pago -->

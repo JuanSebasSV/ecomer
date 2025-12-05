@@ -1,4 +1,3 @@
-// backend/models/order.models.js
 import mongoose from "mongoose";
 
 const orderSchema = new mongoose.Schema({
@@ -23,13 +22,15 @@ const orderSchema = new mongoose.Schema({
     telefono: { type: String, required: true }
   },
   
-  // Información de facturación/entrega
+  // Información de facturación/entrega - ACTUALIZADO
   billing: {
     name: { type: String, required: true },
     phone: { type: String, required: true },
     address: { type: String, required: true },
-    city: { type: String, default: "" },
-    department: { type: String, default: "" }
+    city: { type: String, required: true }, // Ahora requerido
+    department: { type: String, required: true }, // Ahora requerido
+    neighborhood: { type: String, default: "" }, // NUEVO: Barrio
+    notes: { type: String, default: "" } // NUEVO: Notas de entrega
   },
   
   // Método de pago
@@ -74,7 +75,7 @@ const orderSchema = new mongoose.Schema({
     default: 'pending'
   },
   
-  // Notas adicionales
+  // Notas adicionales (depreciado - usar billing.notes)
   notes: { type: String, default: "" },
   
   // Metadatos
@@ -101,6 +102,8 @@ const orderSchema = new mongoose.Schema({
 // Índice compuesto para consultas frecuentes
 orderSchema.index({ usuarioId: 1, createdAt: -1 });
 orderSchema.index({ status: 1, createdAt: -1 });
+orderSchema.index({ 'billing.city': 1 }); // Nuevo índice para búsquedas por ciudad
+orderSchema.index({ 'billing.department': 1 }); // Nuevo índice para búsquedas por departamento
 
 // Actualizar updatedAt antes de guardar
 orderSchema.pre('save', function(next) {
