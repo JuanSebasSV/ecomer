@@ -585,3 +585,4 @@
 
   console.log("✅ Checkout inicializado correctamente con ubicación de Colombia");
 })();
+// cambios

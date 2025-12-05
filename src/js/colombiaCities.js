@@ -46,3 +46,4 @@ if (typeof module !== 'undefined' && module.exports) {
 if (typeof window !== 'undefined') {
   window.COLOMBIA_DATA = COLOMBIA_DATA;
 }
+// Cambios 

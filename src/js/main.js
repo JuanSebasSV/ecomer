@@ -270,3 +270,4 @@ function writeCartLocal(cart) {
     window.scrollTo({ top: y, behavior: 'smooth' });
   });
 })();
+// cambios
