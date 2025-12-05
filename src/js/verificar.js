@@ -2,7 +2,7 @@
 // VERIFICAR CÓDIGO DE 6 DÍGITOS
 
 (function initVerificarCodigo() {
-  const API_BASE = "http://localhost:8081/api/users";
+  const API_BASE = "https://tiendavirtual-z09x.onrender.com/api/users";
   
   const form = document.getElementById("verify-code-form");
   const codeInput = document.getElementById("verification-code");

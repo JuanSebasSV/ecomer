@@ -41,7 +41,7 @@
 
     try {
       // Llamar a la API de recuperación
-      const response = await fetch("http://localhost:8081/api/users/recover-password", {
+      const response = await fetch("https://tiendavirtual-z09x.onrender.com/api/users/recover-password", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ correo: email }),

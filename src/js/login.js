@@ -4,7 +4,7 @@
 
   console.log("📌 Login conectado desde login.js");
 
-  const API_URL = "http://localhost:8081/api/login";
+  const API_URL = "https://tiendavirtual-z09x.onrender.com/api/login";
   const btn = document.getElementById("login-btn");
   const errorDiv = document.getElementById("login-error");
   const errorMsg = document.getElementById("login-error-message");

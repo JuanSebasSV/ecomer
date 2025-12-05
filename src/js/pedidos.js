@@ -2,7 +2,7 @@
 // PÁGINA DE PEDIDOS DEL USUARIO - VERSIÓN COMPLETA CORREGIDA
 
 (function initPedidos() {
-  const API_BASE = "http://localhost:8081/api/checkout";
+  const API_BASE = "https://tiendavirtual-z09x.onrender.com/api/checkout";
 
   // Elementos del DOM
   const loadingState = document.getElementById("loading-state");

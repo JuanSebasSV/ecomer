@@ -1,5 +1,5 @@
 (function initPerfil() {
-  const API_BASE = "http://localhost:8081/api/users";
+  const API_BASE = "https://tiendavirtual-z09x.onrender.com/api/users";
   
   // Verificar sesión
   const userLocal = JSON.parse(localStorage.getItem("user") || "null");

@@ -1,7 +1,7 @@
 // RESTABLECER CONTRASEÑA - Página que recibe el token del email
 
 (function initResetPassword() {
-  const API_BASE = "http://localhost:8081/api/users";
+  const API_BASE = "https://tiendavirtual-z09x.onrender.com/api/users";
 
   // Elementos del DOM
   const loadingState = document.getElementById("loading-state");

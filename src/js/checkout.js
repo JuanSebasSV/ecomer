@@ -433,7 +433,7 @@
 
     try {
       // IMPORTANTE: Cambia esta URL por la ruta real de tu backend
-      const response = await fetch("http://localhost:8081/api/checkout", {
+      const response = await fetch("https://tiendavirtual-z09x.onrender.com/api/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),

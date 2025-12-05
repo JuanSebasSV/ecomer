@@ -1,7 +1,7 @@
 // PÁGINA DE CONFIRMACIÓN DE PEDIDO - CON CARRUSEL FUNCIONAL
 
 (function initConfirmacion() {
-  const API_BASE = "http://localhost:8081/api/checkout";
+  const API_BASE = "https://tiendavirtual-z09x.onrender.com/api/checkout";
 
   // Elementos del DOM
   const loadingState = document.getElementById("loading-state");

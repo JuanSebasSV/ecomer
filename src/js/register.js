@@ -31,7 +31,7 @@
     }
 
     try {
-      const res = await fetch("http://localhost:8081/api/users/register", {
+      const res = await fetch("https://tiendavirtual-z09x.onrender.com/api/users/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),

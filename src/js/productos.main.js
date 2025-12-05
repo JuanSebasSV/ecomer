@@ -1,7 +1,7 @@
 // === Cargar productos desde la API del backend (versión robusta) ===
 async function fetchProductsFromAPI() {
   try {
-    const res = await fetch("http://localhost:8081/api/productos");
+    const res = await fetch("https://tiendavirtual-z09x.onrender.com/api/productos");
     if (!res.ok) throw new Error("Error al cargar productos del servidor: " + res.status);
     const data = await res.json();
 
